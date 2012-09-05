@@ -7,13 +7,14 @@
 # 
 # Copyright (c) 2012-2012, Gianluca Della Vedova (http://gianluca.dellavedova.org)
 NO_UNIQUE_RC=0
-CXXFLAGS=-g -fPIC -Wall -O2 -std=c++0x
+CXXFLAGS=-g -fPIC -Wall -O0 -std=c++0x
 
+.PHONY: all clean
 
 all: tightString.o test
 
 clean:
-	rm -f *.o
+	rm -f *.o test
 
 test: test.cpp tightString.o
 	$(CXX) $(CXXFLAGS) -o test test.cpp tightString.cpp -I /usr/include/
