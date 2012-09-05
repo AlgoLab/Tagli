@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
 Copyright 2012-2012 Gianluca Della Vedova (http://gianluca.dellavedova.org)
 
@@ -40,22 +40,22 @@ static const NucleotideBits Thymine = 3;
 
 static const Fingerprint _highest_2_bits_bitmask_ = ~(~ (Fingerprint)0 >> 2);
 
-Nucleotide decodeNucleotide(NucleotideBits);
-NucleotideBits encodeNucleotide(Nucleotide);
-Fingerprint encode(const std::string);
-std::string decode(Fingerprint, unsigned short int);
+Nucleotide decodeNucleotide(const NucleotideBits);
+NucleotideBits encodeNucleotide(const Nucleotide);
+Fingerprint encode(const std::string&);
+std::string decode(const Fingerprint, const unsigned short int);
 
 
 class TightString {
 public:
     Fingerprint fingerprint;
 
-    TightString(const std::string *);
+    TightString(const std::string&);
 
-   
-    std::string unimport(void);
-	void import(std::string);
-    
+
+    std::string unimport(void) const;
+    void import(const std::string&);
+
 
 private:
 };
@@ -74,10 +74,10 @@ public:
     unsigned short int length;
     Fingerprint kmer[WORDS_IN_LONGSTRING];
 
-    LongTightString(const std::string *);
+    LongTightString(const std::string&);
 
     std::string unimport(void);
-	void import(std::string);
+    void import(const std::string&);
 
 };
 

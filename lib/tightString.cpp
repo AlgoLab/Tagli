@@ -1,4 +1,4 @@
-/* 
+/*
 Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
 Copyright 2012-2012 Gianluca Della Vedova (http://gianluca.dellavedova.org)
 
@@ -27,50 +27,44 @@ using namespace std;
 
 
 
-TightString::TightString(const std::string *s) {
-	TightString::import(*s);
+TightString::TightString(const std::string& s) {
+	TightString::import(s);
 }
 
-void TightString::import(const std::string s) {
+void TightString::import(const std::string& s) {
 	fingerprint = encode(s);
 }
 
-std::string TightString::unimport(void) {
+std::string TightString::unimport(void) const {
 	return (decode(fingerprint, KMER_LENGTH));
 }
 
-Fingerprint encode(std::string k) {
+Fingerprint encode(const std::string& k) {
 	assert(k.length() <= KMER_LENGTH );
 	Fingerprint fingerprint = 0;
-	unsigned short int length = k.length();
+	const unsigned short int length = k.length();
 	for (unsigned int i=0; i<length; i++) {
 		fingerprint = fingerprint << 2;
 		fingerprint += encodeNucleotide(k[i]);
 	}
-	fingerprint = fingerprint << (2 * (KMER_LENGTH - length));
 	return fingerprint;
 }
 
 
 
-std::string decode(Fingerprint f, unsigned short int length) {
-	string s;
-//	assert(length <= KMER_LENGTH );
-	for (unsigned int i=0; i<length; i++) {
-		unsigned short int x = (f & _highest_2_bits_bitmask_) >> (TAGLI_WORD_SIZE - 2); // get the highest 2 bits
-		// cout <<hex<< f << "-" << _highest_2_bits_bitmask_ << " " << (f & _highest_2_bits_bitmask_)   << " " << ((f & _highest_2_bits_bitmask_) >> (TAGLI_WORD_SIZE - 2)) << " " << TAGLI_WORD_SIZE  << "\n";
-		// cout <<hex<< ~(~ (Fingerprint)0 >> 2) << " " << (~ (Fingerprint)0 >> 2) << " " << ~ (Fingerprint)0  << " " << "\n";
-		s.push_back(decodeNucleotide(x));
-//		cout << x << "-" << f << " " << s << " " << decodeNucleotide(x) << "\n";
-		f = f << 2;
-	}
-//	cout << f << "-" << length << " " << KMER_LENGTH - length << " " <<  "\n";
-	assert(s.length() == length);
-	return s;
+std::string decode(const Fingerprint f, const unsigned short int length) {
+  string s(length, ' ');
+  Fingerprint _f(f);
+  for (unsigned short int i= length; i>0;) {
+	 --i; // 'i' is unsigned !!
+	 s[i]= decodeNucleotide(_f & 0x3);
+	 _f = _f >> 2;
+  }
+  return s;
 }
-	
-	
-    
+
+
+
 Nucleotide decodeNucleotide(NucleotideBits nucleotide) {
 	switch (nucleotide) {
 	case 0:
@@ -126,35 +120,29 @@ std::string Kmer::unimport(void) {
 
 */
 
-LongTightString::LongTightString(const std::string *s) {
-	LongTightString::import(*s);
+LongTightString::LongTightString(const std::string& s) {
+	LongTightString::import(s);
 }
 
 
-void LongTightString::import(std::string s) {
+void LongTightString::import(const std::string& s) {
 	length = s.length();
 	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) { kmer[i]=0; }
-	unsigned short int chunk = 0;
-	while (s.length()>0) {
-		kmer[chunk] = encode(s.substr(0,KMER_LENGTH));
-		chunk++;
-		s.erase(0,KMER_LENGTH);
+	for (unsigned short int i=0, chunk= 0;
+		  i<length;
+		  i+= KMER_LENGTH, ++chunk) {
+		kmer[chunk] = encode(s.substr(i, KMER_LENGTH));
 	}
 }
 
 std::string LongTightString::unimport(void) {
-	int l = length;
-	unsigned short int chunk = 0;
-	std::string s("");
-	while (l > 0) {
-		unsigned short int chunk_length = min (l, KMER_LENGTH);
-		// cout << s << " " << chunk << " " << l << " " << chunk_length << "\n";
-		// cout << s << " " << s.length()  << "\n";
-		s.append(decode(kmer[chunk],chunk_length));
-		chunk++;
-		l -= chunk_length;
+	std::string s(length, ' ');
+	for (unsigned short int i=0, chunk= 0;
+		  i<length;
+		  i+= KMER_LENGTH, ++chunk) {
+		unsigned short int chunk_length = min (length-i, KMER_LENGTH);
+		s.replace(i, KMER_LENGTH, decode(kmer[chunk], chunk_length));
 	}
-	// cout << s << s.length() << "\n";
 	return s;
 }
 
