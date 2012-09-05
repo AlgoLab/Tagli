@@ -1,8 +1,8 @@
-/* Copyright (c) 2010, Michigan State University.  
+/* Copyright (c) 2010, Michigan State University.
 All rights reserved.
 
 Originally released under BSD License
-Downloaded from https://github.com/ged-lab/khmer 
+Downloaded from https://github.com/ged-lab/khmer
  */
 #include "globals.hpp"
 #include "tightString.hpp"
@@ -17,8 +17,10 @@ using namespace std;
 
 void test0 (std::string s) {
 	LongTightString t(s);
-	cout << s << " " << s.length() << " " << encode(s) << " * " << decode(encode(s), s.length())  <<  "*\n";
-	assert (s.compare(decode(encode(s), s.length())) == 0);
+	Fingerprint f = encode(s);
+	std::string df = decode(f, s.length());
+	cout << s << " " << s.length() << " " << f << " * " << df  <<  "*\n";
+	assert (s == df);
 
 }
 
@@ -31,15 +33,20 @@ void test0b (unsigned int l) {
 void test1 (std::string s) {
 	TightString t(s);
 	Fingerprint f = t.fingerprint;
-	cout << s << " " << f  << " " << t.unimport()  << "\n";
-	assert (s.compare(t.unimport()) == 0);
+	cout << s << " " << hex << f  << " " << t.unimport()  << "\n";
+	assert (s == t.unimport());
 }
 
 void test2 (std::string s) {
 	LongTightString t(s);
-	cout << s << " " << t.unimport() << " " << s.length()  << " " << t.unimport().length()  << " ** ";
-	cout << t.length << " " << t.kmer[0]  << " " << t.kmer[1]  << " " <<t.kmer[2]  << "\n";
-	assert (s.compare(t.unimport()) == 0);
+	cout << s << " " << t.unimport() << " "
+		  << s.length()  << " " << t.unimport().length() << " ** ";
+	cout << t.length;
+	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) {
+	  cout << " " << hex << t.kmer[i];
+	}
+	cout << "\n";
+	assert (s == t.unimport());
 
 }
 
@@ -62,7 +69,7 @@ int main()
 	for(unsigned int i=0; i<= KMER_LENGTH; i++) {
 		test0b(i);
 	}
-	
+
 	test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
 	test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
@@ -110,7 +117,8 @@ int main()
 	test2("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 	test2("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 	test2("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+	test2("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
 
-	
+
   return 0;
 }
