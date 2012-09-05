@@ -40,20 +40,45 @@ static const NucleotideBits Thymine = 3;
 
 static const Fingerprint _highest_2_bits_bitmask_ = ~(~ (Fingerprint)0 >> 2);
 
+Nucleotide decodeNucleotide(NucleotideBits);
+NucleotideBits encodeNucleotide(Nucleotide);
+Fingerprint encode(const std::string);
+std::string decode(Fingerprint, unsigned short int);
+
+
 class TightString {
 public:
     Fingerprint fingerprint;
 
-    TightString(std::string);
-    
+    TightString(const std::string *);
+
+   
     std::string unimport(void);
-
-	void import(const std::string);
-
+	void import(std::string);
+    
 
 private:
-    Nucleotide exportNucleotide(NucleotideBits);
-    NucleotideBits importNucleotide(Nucleotide);
+};
+
+/*
+class Kmer: public TigthString {
+    // length == KMER_LENGTH
+
+};
+*/
+
+#define WORDS_IN_LONGSTRING 3
+class LongTightString {
+    // bit fields to store longer strings
+public:
+    unsigned short int length;
+    Fingerprint kmer[WORDS_IN_LONGSTRING];
+
+    LongTightString(const std::string *);
+
+    std::string unimport(void);
+	void import(std::string);
+
 };
 
 

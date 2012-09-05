@@ -23,9 +23,20 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #include <string.h>
 #include <string>
 #include <assert.h>
+#include "tightString.hpp"
 
-#include "khmer.hh"
 
-using namespace std;
-using namespace khmer;
-using namespace tagli;
+class Junction {
+public:
+    bool is_left; // true if left junction
+    uint8_t multiple_side_length;
+    LongTightString single_side; // is a prefix if is_left,
+                                 // otherwise is a suffix
+    LongTightString *multiple_side;
+
+    shift_junction(int8_t); // movement <0 then single_side shortens
+                            // movement >0 then single_side enlarges
+
+    find_largest_common_substring(std::string *);
+};
+
