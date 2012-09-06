@@ -7,7 +7,7 @@
 # 
 # Copyright (c) 2012-2012, Gianluca Della Vedova (http://gianluca.dellavedova.org)
 NO_UNIQUE_RC=0
-CXXFLAGS=-g -fPIC -Wall -O0 -std=c++0x
+CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O0 -std=c++0x
 
 .PHONY: all clean
 
