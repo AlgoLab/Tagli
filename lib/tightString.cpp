@@ -66,32 +66,21 @@ std::string decode(const Fingerprint f, const unsigned short int length) {
 
 
 Nucleotide decodeNucleotide(NucleotideBits nucleotide) {
-	switch (nucleotide) {
-	case 0:
-		return 'A';
-	case 1:
-		return 'C';
-	case 2:
-		return 'G';
-	case 3:
-		return 'T';
-	}
-	return '?';
+  const static char map[]= {'A', 'C', 'G', 'T'};
+  return map[0x3 & nucleotide];
 }
 
 NucleotideBits encodeNucleotide(Nucleotide nucleotide) {
-	switch (toupper(nucleotide)) {
-		case 'A':
-		case 'N':
-			return Adenine;
-		case 'C':
-			return Cytosine;
-		case 'G':
-			return Guanine;
-		case 'T':
-			return Thymine;
-	}
-	return Adenine;
+  const static char map[]={0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3};
+#ifndef NDEBUG
+#warning "The following assertion is quite slow: consider to disable assertions (flag -DNDEBUG) or to comment out the code."
+  assert((nucleotide == 'A') || (nucleotide == 'a') ||
+			(nucleotide == 'C') || (nucleotide == 'c') ||
+			(nucleotide == 'G') || (nucleotide == 'g') ||
+			(nucleotide == 'T') || (nucleotide == 't') ||
+			(nucleotide == 'N') || (nucleotide == 'n'));
+#endif
+  return map[(size_t)nucleotide-'A'];
 }
 
 /*
