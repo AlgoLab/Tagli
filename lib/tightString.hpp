@@ -46,7 +46,7 @@ static const Fingerprint _highest_2_bits_bitmask_ = ~(~ (Fingerprint)0 >> 2);
 
 Nucleotide decodeNucleotide(const NucleotideBits);
 NucleotideBits encodeNucleotide(const Nucleotide);
-Fingerprint encode(const std::string&);
+Fingerprint encode(const std::string& k, const size_t start=0, const size_t len=std::string::npos);
 std::string decode(const Fingerprint, const unsigned short int);
 
 

@@ -39,11 +39,11 @@ std::string TightString::unimport(void) const {
 	return (decode(fingerprint, KMER_LENGTH));
 }
 
-Fingerprint encode(const std::string& k) {
-	assert(k.length() <= KMER_LENGTH );
+Fingerprint encode(const std::string& k, const size_t start, const size_t len) {
+	const size_t end= std::min(start + len, k.length());
+	assert(end - start <= KMER_LENGTH );
 	Fingerprint fingerprint = 0;
-	const unsigned short int length = k.length();
-	for (unsigned int i=0; i<length; i++) {
+	for (size_t i= start; i<end; i++) {
 		fingerprint = fingerprint << 2;
 		fingerprint += encodeNucleotide(k[i]);
 	}
@@ -131,7 +131,7 @@ void LongTightString::import(const std::string& s) {
 	for (unsigned short int i=0, chunk= 0;
 		  i<length;
 		  i+= KMER_LENGTH, ++chunk) {
-		kmer[chunk] = encode(s.substr(i, KMER_LENGTH));
+	  kmer[chunk] = encode(s, i, KMER_LENGTH);
 	}
 }
 
