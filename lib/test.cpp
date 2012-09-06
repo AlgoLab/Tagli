@@ -120,5 +120,13 @@ int main()
 	test2("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
 
 
+	cout << "Starting speed-test..." << std::endl;
+	const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
+	for (size_t i= 0; i<1E7; ++i) {
+	  LongTightString t(s);
+	  if (t.unimport() != s) {
+		 cout << "Encoding/decoding error!" << std::endl;
+	  }
+	}
   return 0;
 }
