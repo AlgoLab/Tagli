@@ -20,6 +20,10 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #ifndef _TIGHTSTRING_HH_
 #define _TIGHTSTRING_HH_
 
+#ifdef __clang__
+namespace std { class type_info; }
+#endif
+
 #include <iostream>
 #include <string>
 #include "globals.hpp"
