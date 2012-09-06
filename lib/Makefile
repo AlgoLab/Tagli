@@ -9,6 +9,13 @@
 NO_UNIQUE_RC=0
 CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O0 -std=c++0x
 
+## Uncomment the following line to enable compiler optimizations
+#CXXFLAGS+=-O2 -march=native
+
+## Uncomment the following line to disable assertions
+#CXXFLAGS+=-DNDEBUG
+
+
 .PHONY: all clean
 
 all: tightString.o test
