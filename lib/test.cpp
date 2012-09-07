@@ -19,39 +19,49 @@ void test0 (std::string s) {
 	LongTightString t(s);
 	Fingerprint f = encode(s);
 	std::string df = decode(f, s.length());
-	cout << s << " " << s.length() << " " << f << " * " << df  <<  "*\n";
+//	cout << s << " " << s.length() << " " << f << " * " << df  <<  "*\n";
 	assert (s == df);
 
 }
 
 void test0b (unsigned int l) {
-	cout << l << " 0=>" << decode(0, l)  << " " << decode(0, l).length() << "*\n";
+//	cout << l << " 0=>" << decode(0, l)  << " " << decode(0, l).length() << "*\n";
 	assert (l == decode(0, l).length());
 
 }
 
 void test1 (std::string s) {
 	TightString t(s);
-	Fingerprint f = t.fingerprint;
-	cout << s << " " << hex << f  << " " << t.unimport()  << "\n";
+	// Fingerprint f = t.fingerprint;
+//	cout << s << " " << hex << f  << " " << t.unimport()  << "\n";
 	assert (s == t.unimport());
 }
 
 void test2 (std::string s) {
 	LongTightString t(s);
-	cout << s << " " << t.unimport() << " "
-		  << s.length()  << " " << t.unimport().length() << " ** ";
-	cout << t.length;
+	// cout << s << " " << t.unimport() << " "
+    //               << s.length()  << " " << t.unimport().length() << " ** ";
+	// cout << t.length;
 	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) {
-	  cout << " " << hex << t.kmer[i];
+          // cout << " " << hex << t.kmer[i];
 	}
-	cout << "\n";
+	// cout << "\n";
 	assert (s == t.unimport());
 
 }
 
+void test3 (std::string s1, std::string s2, uint8_t length) {
+	TightString t1(s1);
+	TightString t2(s2);
+	uint8_t l = overlap(t1,t2);
+	assert(l == length);
+}
+
+
 int main()
 {
+	assert (sizeof(Fingerprint)*8 == TAGLI_WORD_SIZE);
+	// Otherwise we need more than 8 bits to store a position within a fingerprint
 
 	test0("A");
 	test0("C");
@@ -119,14 +129,18 @@ int main()
 	test2("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 	test2("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
 
-
+	test3("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT",1);
+	test3("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT",32);
+	test3("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT",0);
+	test3("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT",2);
+	
 	cout << "Starting speed-test..." << std::endl;
 	const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
 	for (size_t i= 0; i<1E7; ++i) {
-	  LongTightString t(s);
-	  if (t.unimport() != s) {
-		 cout << "Encoding/decoding error!" << std::endl;
-	  }
+          LongTightString t(s);
+          if (t.unimport() != s) {
+                 cout << "Encoding/decoding error!" << std::endl;
+          }
 	}
   return 0;
 }

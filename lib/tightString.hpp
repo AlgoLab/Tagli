@@ -49,7 +49,6 @@ NucleotideBits encodeNucleotide(const Nucleotide);
 Fingerprint encode(const std::string& k, const size_t start=0, const size_t len=std::string::npos);
 std::string decode(const Fingerprint, const unsigned short int);
 
-
 class TightString {
 public:
     Fingerprint fingerprint;
@@ -85,5 +84,14 @@ public:
 
 };
 
+
+typedef struct {
+    uint16_t position1;
+    uint16_t position2;
+    uint16_t length;
+} Match;
+
+void find_largest_common_substring(Match &, const LongTightString &, const LongTightString &);
+uint8_t overlap(const TightString &, const TightString &);
 
 #endif

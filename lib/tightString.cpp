@@ -41,6 +41,9 @@ std::string TightString::unimport(void) const {
 
 Fingerprint encode(const std::string& k, const size_t start, const size_t len) {
 	const size_t end= std::min(start + len, k.length());
+	if (end - start > KMER_LENGTH ) {
+		cout << k << " " << k.length() << " " << start << " " << end << " " << len << "\n";
+	}
 	assert(end - start <= KMER_LENGTH );
 	Fingerprint fingerprint = 0;
 	for (size_t i= start; i<end; i++) {
@@ -56,9 +59,9 @@ std::string decode(const Fingerprint f, const unsigned short int length) {
   string s(length, ' ');
   Fingerprint _f(f);
   for (unsigned short int i= length; i>0;) {
-	 --i; // 'i' is unsigned !!
-	 s[i]= decodeNucleotide(_f & 0x3);
-	 _f = _f >> 2;
+         --i; // 'i' is unsigned !!
+         s[i]= decodeNucleotide(_f & 0x3);
+         _f = _f >> 2;
   }
   return s;
 }
@@ -73,7 +76,7 @@ Nucleotide decodeNucleotide(NucleotideBits nucleotide) {
 NucleotideBits encodeNucleotide(Nucleotide nucleotide) {
   const static char map[]={0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3};
 #ifndef NDEBUG
-#warning "The following assertion is quite slow: consider to disable assertions (flag -DNDEBUG) or to comment out the code."
+//#warning "The following assertion is quite slow: consider to disable assertions (flag -DNDEBUG) or to comment out the code."
   assert((nucleotide == 'A') || (nucleotide == 'a') ||
 			(nucleotide == 'C') || (nucleotide == 'c') ||
 			(nucleotide == 'G') || (nucleotide == 'g') ||
@@ -118,17 +121,17 @@ void LongTightString::import(const std::string& s) {
 	length = s.length();
 	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) { kmer[i]=0; }
 	for (unsigned short int i=0, chunk= 0;
-		  i<length;
-		  i+= KMER_LENGTH, ++chunk) {
-	  kmer[chunk] = encode(s, i, KMER_LENGTH);
+                  i<length;
+                  i+= KMER_LENGTH, ++chunk) {
+          kmer[chunk] = encode(s, i, KMER_LENGTH);
 	}
 }
 
 std::string LongTightString::unimport(void) {
 	std::string s(length, ' ');
 	for (unsigned short int i=0, chunk= 0;
-		  i<length;
-		  i+= KMER_LENGTH, ++chunk) {
+                  i<length;
+                  i+= KMER_LENGTH, ++chunk) {
 		unsigned short int chunk_length = min (length-i, KMER_LENGTH);
 		s.replace(i, KMER_LENGTH, decode(kmer[chunk], chunk_length));
 	}
@@ -136,4 +139,16 @@ std::string LongTightString::unimport(void) {
 }
 
 
+uint8_t overlap(const TightString & str1, const TightString & str2) {
+	Fingerprint s1= str1.fingerprint;
+	Fingerprint s2= str2.fingerprint;
+	for (uint8_t len= TAGLI_WORD_SIZE; len>0; s1 = (s1 << 2),  s2 = (s2 & ~0x3), len -= 2) {
+		if (s1 == s2)
+			return len;
+	}
+	return 0;
+}
 
+
+void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2) {
+}

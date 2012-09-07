@@ -14,8 +14,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program; if not, see http://www.gnu.org/licenses/
  */
-#ifndef JUNCTIONS_HH
-#define JUNCTIONS_HH
+#ifndef JUNCTIONS_HPP
+#define JUNCTIONS_HPP
 
 #include <math.h>
 #include <stdio.h>
@@ -24,7 +24,7 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #include <string>
 #include <assert.h>
 #include "tightString.hpp"
-
+#include <vector>
 
 class Junction {
 public:
@@ -32,11 +32,17 @@ public:
     uint8_t multiple_side_length;
     LongTightString single_side; // is a prefix if is_left,
                                  // otherwise is a suffix
-    LongTightString *multiple_side;
+    std::vector<LongTightString> multiple_side;
 
-    shift_junction(int8_t); // movement <0 then single_side shortens
+    void shift_junction(const int8_t); // movement <0 then single_side shortens
                             // movement >0 then single_side enlarges
-
-    find_largest_common_substring(std::string *);
+    LongTigthString remove_multiple(const int8_t); // remove one of the prefixes/suffixes,
+                                                   // that at position given by the parameter
+    void add_multiple(const LongTigthString &);   // add a new prefix/suffix,
+    
+private:
+    find_largest_common_substring(const LongTightString &);
 };
 
+
+#endif
