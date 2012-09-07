@@ -8,6 +8,10 @@
 # Copyright (c) 2012-2012, Gianluca Della Vedova (http://gianluca.dellavedova.org)
 NO_UNIQUE_RC=0
 CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O0 -std=c++0x
+# Clang
+CXX=clang++
+# G++
+#CXX=g++-4.7
 
 ## Uncomment the following line to enable compiler optimizations
 #CXXFLAGS+=-O2 -march=native
