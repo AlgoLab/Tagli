@@ -20,9 +20,9 @@ CXX=clang++
 #CXXFLAGS+=-DNDEBUG
 
 
-.PHONY: all clean
+.PHONY: all clean run_test
 
-all: tightString.o test
+all: tightString.o run_test test
 
 clean:
 	rm -f *.o test
@@ -32,3 +32,5 @@ test: test.cpp tightString.o
 
 tightString.o: tightString.cpp tightString.hpp globals.hpp
 
+run_test: test
+	./test
