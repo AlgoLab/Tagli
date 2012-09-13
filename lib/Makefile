@@ -9,9 +9,9 @@
 NO_UNIQUE_RC=0
 CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O0 -std=c++0x
 # Clang
-CXX=clang++
+#CXX=clang++
 # G++
-#CXX=g++-4.7
+CXX=g++-4.7
 
 ## Uncomment the following line to enable compiler optimizations
 #CXXFLAGS+=-O2 -march=native

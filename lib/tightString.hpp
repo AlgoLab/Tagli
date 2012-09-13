@@ -92,6 +92,7 @@ typedef struct {
 } Match;
 
 void find_largest_common_substring(Match &, const LongTightString &, const LongTightString &);
-uint8_t overlap(const TightString &, const TightString &);
+uint16_t overlap(const TightString &, const TightString &);
+uint16_t overlap(const LongTightString &, const LongTightString &);
 
 #endif
