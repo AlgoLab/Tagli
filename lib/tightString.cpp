@@ -170,6 +170,42 @@ uint16_t overlap(const LongTightString & str1, const LongTightString & str2) {
 	return len;
 }
 
+LongTightString LongTightString::pop_first_character() {
+	LongTightString a("");
+	a.length = this->length - 1;
+	unsigned short int chunks = this->length / KMER_LENGTH;
+	unsigned short int residue_length = this->length - chunks * KMER_LENGTH;
+	unsigned short int moved = GET_2BITS(this->kmer[chunks-1], KMER_LENGTH - residue_length);
+	if (chunks > 1) {
+		// we need to manage more than one chunk, including the fact that the most significant two bits of the (i+1)-th
+		// chunk becomes the two least significant bits of the i-th chunk.
+		for (unsigned short int i=0; i < chunks-1; i++) {
+			a.kmer[i] = this->kmer[i] << 2;
+			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
+			a.kmer[i] += this->kmer[i+1] >> (KMER_LENGTH - 2);
+			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
+		}
+		// now we have fixed all but the last chunk and the two least significant bits of the penultimate chunk
+		// first fix the two least significant bits of the penultimate chunk
+		for (unsigned short int i=0; i < chunks-1; i++) {
+			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
+		}
+		a.kmer[chunks-2] += moved;
+		for (unsigned short int i=0; i < chunks-1; i++) {
+			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
+		}
+	}
+	// Now reset the two most significant bits of the last chunk
+	a.kmer[chunks-1] -= (moved << 2 * (residue_length - 1));
+	for (unsigned short int i=0; i < chunks-1; i++) {
+		cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
+	}
+	return a;
+}
+
+// void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2)
 
 // void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2) {
+//  const LongTightString TightString
 // }
+

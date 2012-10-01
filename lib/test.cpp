@@ -19,7 +19,7 @@ void test0 (std::string s) {
 	LongTightString t(s);
 	Fingerprint f = encode(s);
 	std::string df = decode(f, s.length());
-//	cout << s << " " << s.length() << " " << f << " * " << df  <<  "*\n";
+	cout << s << " " << s.length() << " " << f << " * " << df  <<  "*\n";
 	assert (s == df);
 
 }
@@ -59,12 +59,21 @@ void test3 (std::string s1, std::string s2, unsigned short int len) {
 	assert(l == len);
 }
 
+void test4 (std::string s1, std::string s2) {
+	LongTightString t1(s1);
+	LongTightString t2 = t1.pop_first_character();
+	cout << "test4\n" << s1 << "\n" << t2.unimport() << "\n";
+	// cout <<  l << "\n";
+	assert(s2 == t2.unimport());
+}
+
+
 
 int main()
 {
 	assert (sizeof(Fingerprint)*8 == TAGLI_WORD_SIZE);
 	// Otherwise we need more than 8 bits to store a position within a fingerprint
-
+	
 	test0("A");
 	test0("C");
 	test0("G");
@@ -135,6 +144,12 @@ int main()
 	test3("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 32);
 	test3("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 0);
 	test3("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 1);
+
+	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test4("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT", "TTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
+
 	
 	cout << "Starting speed-test..." << std::endl;
 	const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
@@ -144,5 +159,6 @@ int main()
                  cout << "Encoding/decoding error!" << std::endl;
           }
 	}
-  return 0;
+
+	return 0;
 }
