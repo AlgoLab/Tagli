@@ -39,15 +39,13 @@ void test1 (std::string s) {
 
 void test2 (std::string s) {
 	LongTightString t(s);
-	// cout << s << " " << t.unimport() << " "
-    //               << s.length()  << " " << t.unimport().length() << " ** ";
-	// cout << t.length;
-	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) {
-          // cout << " " << hex << t.kmer[i];
-	}
-	// cout << "\n";
+	cout << s << "*" ;
+	cout << t.unimport() << "-"
+                  << s.length()  << "+" << t.unimport().length() << " ** ";
+	cout << t.length;
+	cout << "\n";
+	cout << t.sequence.to_string() << "\n";
 	assert (s == t.unimport());
-
 }
 
 void test3 (std::string s1, std::string s2, unsigned short int len) {
@@ -59,12 +57,12 @@ void test3 (std::string s1, std::string s2, unsigned short int len) {
 	assert(l == len);
 }
 
-void test4 (std::string s1, std::string s2) {
+void test4 (std::string s1) {
 	LongTightString t1(s1);
 	LongTightString t2 = t1.pop_first_character();
-	cout << "test4\n" << s1 << "\n" << t2.unimport() << "\n";
+	cout << s1 << "-" << t2.unimport() << "\n";
 	// cout <<  l << "\n";
-	assert(s2 == t2.unimport());
+	assert(s1.substr(1) == t2.unimport());
 }
 
 
@@ -106,11 +104,15 @@ int main()
 	test1("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
 	test1("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 
-
+	cout << "Test2\n";
 	test2("A");
 	test2("C");
 	test2("G");
 	test2("T");
+	test2("AA");
+	test2("CC");
+	test2("GG");
+	test2("TT");
 	test2("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	test2("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
 	test2("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
@@ -145,10 +147,14 @@ int main()
 	test3("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 0);
 	test3("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 1);
 
-	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-	test4("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT", "TTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
+	cout << "TEST 4\n";
+	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test4("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test4("CCCTAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
 
 	
 	cout << "Starting speed-test..." << std::endl;

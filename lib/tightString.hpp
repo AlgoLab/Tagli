@@ -26,15 +26,21 @@ namespace std { class type_info; }
 
 #include <iostream>
 #include <string>
+#include <bitset>
 #include "globals.hpp"
 #include <stdint.h>
 #include <cstdint>
+#include <algorithm>
+
+
 
 typedef unsigned short int NucleotideBits;
 // Just a sequence string, but with just two bits per character
 typedef unsigned char Nucleotide;
 typedef uint64_t Fingerprint;
 typedef std::string Read;
+#define LONGTIGHTSTRING_LEN 192
+typedef std::bitset<LONGTIGHTSTRING_LEN> LongTightStringSequence;
 
 static const NucleotideBits Adenine = 0;
 static const NucleotideBits Cytosine = 1;
@@ -81,12 +87,11 @@ class Kmer: public TigthString {
 };
 */
 
-#define WORDS_IN_LONGSTRING 3
 class LongTightString {
     // bit fields to store longer strings
 public:
     unsigned short int length = 0;
-    Fingerprint kmer[WORDS_IN_LONGSTRING];
+    LongTightStringSequence sequence;
 
     LongTightString(const std::string&);
 

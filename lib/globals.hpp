@@ -30,8 +30,6 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #define MAXLINE 5000 
 
 #define TAGLI_WORD_SIZE 64
-#define KMER_LENGTH 32
-// KMER_LENGTH must be half of TAGLI_WORD_SIZE
-
+#define KMER_LENGTH (TAGLI_WORD_SIZE / 2)
 
 #endif

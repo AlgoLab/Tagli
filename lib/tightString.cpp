@@ -119,21 +119,24 @@ LongTightString::LongTightString(const std::string& s) {
 
 void LongTightString::import(const std::string& s) {
 	length = s.length();
-	for (unsigned short int i=0; i<WORDS_IN_LONGSTRING; i++) { kmer[i]=0; }
-	for (unsigned short int i=0, chunk= 0;
-                  i<length;
-                  i+= KMER_LENGTH, ++chunk) {
-          kmer[chunk] = encode(s, i, KMER_LENGTH);
+	sequence.reset();
+	for (size_t i=0; i<length; i++) {
+		sequence <<= 2;
+		bitset<2> t = encodeNucleotide(s[i]);
+		sequence.set(1,t[1]);
+		sequence.set(0,t[0]);
 	}
 }
 
 std::string LongTightString::unimport(void) {
-	std::string s(length, ' ');
-	for (unsigned short int i=0, chunk= 0;
-                  i<length;
-                  i+= KMER_LENGTH, ++chunk) {
-		unsigned short int chunk_length = min (length-i, KMER_LENGTH);
-		s.replace(i, KMER_LENGTH, decode(kmer[chunk], chunk_length));
+	std::string s("");
+	LongTightStringSequence seq = this->sequence;
+	for (unsigned short int i=0; i < this->length; i++) {
+		bitset<2> t;
+		t[0] = seq[0];
+		t[1] = seq[1];
+		s.insert(0,1,decodeNucleotide(t.to_ulong()));
+		seq >>= 2;
 	}
 	return s;
 }
@@ -157,6 +160,7 @@ uint16_t overlap(const TightString & str1, const TightString & str2) {
 }
 
 
+/*
 uint16_t overlap(const LongTightString & str1, const LongTightString & str2) {
 	uint16_t len= 0;
 	uint16_t partial_len= 0;
@@ -168,39 +172,23 @@ uint16_t overlap(const LongTightString & str1, const LongTightString & str2) {
 		partial_len= overlap(str1.kmer[pos1], str2.kmer[pos2]);
 	}
 	return len;
+	for (uint16_t len= KMER_LENGTH, d=2; len>0; d+=2, len-- ) {
+		// cout << hex << f1 <<"\n";
+		// cout << f2 <<"\n";
+		// cout << "Len = " << len <<". Shift=" << d << "\n";
+		if (f1 == f2)
+			return len;
+		f1 = (f1 << 2);
+		f2 = ((f2 >> d) << d);
+	}
+	return 0;
 }
+*/
 
 LongTightString LongTightString::pop_first_character() {
-	LongTightString a("");
-	a.length = this->length - 1;
-	unsigned short int chunks = this->length / KMER_LENGTH;
-	unsigned short int residue_length = this->length - chunks * KMER_LENGTH;
-	unsigned short int moved = GET_2BITS(this->kmer[chunks-1], KMER_LENGTH - residue_length);
-	if (chunks > 1) {
-		// we need to manage more than one chunk, including the fact that the most significant two bits of the (i+1)-th
-		// chunk becomes the two least significant bits of the i-th chunk.
-		for (unsigned short int i=0; i < chunks-1; i++) {
-			a.kmer[i] = this->kmer[i] << 2;
-			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
-			a.kmer[i] += this->kmer[i+1] >> (KMER_LENGTH - 2);
-			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
-		}
-		// now we have fixed all but the last chunk and the two least significant bits of the penultimate chunk
-		// first fix the two least significant bits of the penultimate chunk
-		for (unsigned short int i=0; i < chunks-1; i++) {
-			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
-		}
-		a.kmer[chunks-2] += moved;
-		for (unsigned short int i=0; i < chunks-1; i++) {
-			cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
-		}
-	}
-	// Now reset the two most significant bits of the last chunk
-	a.kmer[chunks-1] -= (moved << 2 * (residue_length - 1));
-	for (unsigned short int i=0; i < chunks-1; i++) {
-		cout << hex << a.kmer[i] << "=" << this->kmer[i] << "\n";
-	}
-	return a;
+	LongTightString *a = this;
+	a->length = this->length - 1;
+	return *a;
 }
 
 // void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2)
