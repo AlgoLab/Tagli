@@ -27,10 +27,6 @@ using namespace std;
 
 
 
-TightString::TightString(const std::string& s) {
-	fingerprint = encode(s);
-}
-
 void TightString::import(const std::string& s) {
 	fingerprint = encode(s);
 }
@@ -111,10 +107,6 @@ std::string Kmer::unimport(void) {
 
 
 */
-
-LongTightString::LongTightString(const std::string& s) {
-	LongTightString::import(s);
-}
 
 
 void LongTightString::import(const std::string& s) {

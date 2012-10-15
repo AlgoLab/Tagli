@@ -68,9 +68,11 @@ std::string decode(const Fingerprint, const unsigned short int);
 
 class TightString {
 public:
-    Fingerprint fingerprint = 0;
+    Fingerprint fingerprint;
 
-    TightString(const std::string&);
+    TightString(const std::string& s)
+		  :fingerprint(encode(s))
+    {}
 
 
     std::string unimport(void) const;
@@ -90,10 +92,14 @@ class Kmer: public TigthString {
 class LongTightString {
     // bit fields to store longer strings
 public:
-    unsigned short int length = 0;
+    unsigned short int length;
     LongTightStringSequence sequence;
 
-    LongTightString(const std::string&);
+    LongTightString(const std::string& s)
+		  :length(0), sequence(0)
+    {
+		this->import(s);
+    }
 
     std::string unimport(void);
     void import(const std::string&);
