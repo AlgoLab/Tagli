@@ -7,7 +7,7 @@
 # 
 # Copyright (c) 2012-2012, Gianluca Della Vedova (http://gianluca.dellavedova.org)
 NO_UNIQUE_RC=0
-CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O0 -std=c++11
+CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++ -O2 -std=c++11
 # Clang
 #CXX=clang++
 # G++
