@@ -28,9 +28,9 @@ clean:
 	rm -f *.o test
 
 test: test.cpp tightString.o
-	$(CXX) $(CXXFLAGS) -o test test.cpp tightString.cpp -I /usr/include/
+	$(CXX) $(CXXFLAGS) -o test test.cpp tightString.o -I /usr/include/
 
 tightString.o: tightString.cpp tightString.hpp globals.hpp
 
 run_test: test
-	./test
+	time ./test

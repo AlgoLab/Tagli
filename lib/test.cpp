@@ -71,7 +71,7 @@ int main()
 {
 	assert (sizeof(Fingerprint)*8 == TAGLI_WORD_SIZE);
 	// Otherwise we need more than 8 bits to store a position within a fingerprint
-	
+
 	test0("A");
 	test0("C");
 	test0("G");
@@ -156,7 +156,7 @@ int main()
 	test4("CCCTAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
 
-	
+
 	cout << "Starting speed-test..." << std::endl;
 	const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
 	for (size_t i= 0; i<1E7; ++i) {
