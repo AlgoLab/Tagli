@@ -27,10 +27,6 @@ using namespace std;
 
 
 
-TightString::TightString(const std::string& s) {
-	fingerprint = encode(s);
-}
-
 void TightString::import(const std::string& s) {
 	fingerprint = encode(s);
 }
@@ -112,33 +108,25 @@ std::string Kmer::unimport(void) {
 
 */
 
-LongTightString::LongTightString(const std::string& s) {
-	LongTightString::import(s);
-}
-
 
 void LongTightString::import(const std::string& s) {
 	length = s.length();
 	sequence.reset();
 	for (size_t i=0; i<length; i++) {
-		sequence <<= 2;
-		bitset<2> t = encodeNucleotide(s[i]);
-		sequence.set(1,t[1]);
-		sequence.set(0,t[0]);
+		NucleotideBits t = encodeNucleotide(s[length-i-1]);
+		sequence[2*i] = (t & 0x1);
+		sequence[2*i+1] = (t & 0x2);
 	}
 }
 
 std::string LongTightString::unimport(void) {
-	std::string s("");
-	LongTightStringSequence seq = this->sequence;
-	for (unsigned short int i=0; i < this->length; i++) {
-		bitset<2> t;
-		t[0] = seq[0];
-		t[1] = seq[1];
-		s.insert(0,1,decodeNucleotide(t.to_ulong()));
-		seq >>= 2;
-	}
-	return s;
+  std::string s(length, ' ');
+  NucleotideBits t;
+  for (unsigned short int i=0; i < length; ++i) {
+	 t= sequence[2*(length-i-1)] + (sequence[2*(length-i-1)+1]*2);
+	 s[i]= decodeNucleotide(t & 0x3);
+  }
+  return s;
 }
 
 

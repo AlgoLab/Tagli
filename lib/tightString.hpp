@@ -61,16 +61,18 @@ std::string decode(const Fingerprint, const unsigned short int);
 /* The TightString class is a compact representation of a string no longer than KMER_LENGTH bps as a 2*KMER_LENGTH-bit
    unsigned integer, therefore using 2 bits for each character. With currently available architectures, that means that
    we store a 32bp string with a word.
-   
+
    Notice that we need to also store the length of the encoded string, and that only the least significant bits are
    used, that is a string that is actually shorter than KMER_LENGTH characters will have leading zeroes
 */
- 
+
 class TightString {
 public:
-    Fingerprint fingerprint = 0;
+    Fingerprint fingerprint;
 
-    TightString(const std::string&);
+    TightString(const std::string& s)
+		  :fingerprint(encode(s))
+    {}
 
 
     std::string unimport(void) const;
@@ -90,10 +92,14 @@ class Kmer: public TigthString {
 class LongTightString {
     // bit fields to store longer strings
 public:
-    unsigned short int length = 0;
+    unsigned short int length;
     LongTightStringSequence sequence;
 
-    LongTightString(const std::string&);
+    LongTightString(const std::string& s)
+		  :length(0), sequence(0)
+    {
+		this->import(s);
+    }
 
     std::string unimport(void);
     void import(const std::string&);
@@ -124,7 +130,7 @@ public:
 
     SuffixArray(const std::string&);
     SuffixArray(const LongTightString&);
-    
+
 
 }
 */
