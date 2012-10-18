@@ -110,20 +110,20 @@ std::string Kmer::unimport(void) {
 
 
 void LongTightString::import(const std::string& s) {
-	length = s.length();
-	sequence.reset();
-	for (size_t i=0; i<length; i++) {
-		NucleotideBits t = encodeNucleotide(s[length-i-1]);
-		sequence[2*i] = (t & 0x1);
-		sequence[2*i+1] = (t & 0x2);
+	_length = s.length();
+	_sequence.reset();
+	for (size_t i=0; i<_length; i++) {
+		NucleotideBits t = encodeNucleotide(s[_length-i-1]);
+		_sequence[2*i] = (t & 0x1);
+		_sequence[2*i+1] = (t & 0x2);
 	}
 }
 
 std::string LongTightString::unimport(void) {
-  std::string s(length, ' ');
+  std::string s(_length, ' ');
   NucleotideBits t;
-  for (unsigned short int i=0; i < length; ++i) {
-	 t= sequence[2*(length-i-1)] + (sequence[2*(length-i-1)+1]*2);
+  for (unsigned short int i=0; i < _length; ++i) {
+	 t= _sequence[2*(_length-i-1)] + (_sequence[2*(_length-i-1)+1]*2);
 	 s[i]= decodeNucleotide(t & 0x3);
   }
   return s;
@@ -173,15 +173,15 @@ uint16_t overlap(const LongTightString & str1, const LongTightString & str2) {
 }
 */
 
-LongTightString LongTightString::pop_first_character() {
-	LongTightString *a = this;
-	a->length = this->length - 1;
-	return *a;
-}
-
 // void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2)
 
 // void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2) {
 //  const LongTightString TightString
 // }
 
+NucleotideBits LongTightString::pop() {
+  NucleotideBits t= _sequence[2*_length-2] + (_sequence[2*_length-1]*2);
+  _sequence <<= 2;
+  --_length;
+  return t;
+}

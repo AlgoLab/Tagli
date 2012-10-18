@@ -89,16 +89,40 @@ class Kmer: public TigthString {
 };
 */
 
+
+typedef unsigned short int len_t;
+
 class LongTightString {
     // bit fields to store longer strings
+private:
+    len_t _length;
+    LongTightStringSequence _sequence;
 public:
-    unsigned short int length;
-    LongTightStringSequence sequence;
 
-    LongTightString(const std::string& s)
-                  :length(0), sequence(0)
+    explicit LongTightString(const std::string& s)
+        :_length(0), _sequence()
     {
-		this->import(s);
+        this->import(s);
+    }
+
+    explicit LongTightString(const LongTightString& lts)
+        :_length(lts._length), _sequence(lts._sequence)
+    {}
+
+    len_t& length() {
+        return _length;
+    }
+
+    const len_t& length() const {
+        return _length;
+    }
+
+    LongTightStringSequence& sequence() {
+        return _sequence;
+    }
+
+    const LongTightStringSequence& sequence() const {
+        return _sequence;
     }
 
     std::string unimport(void);
@@ -109,9 +133,9 @@ public:
     NucleotideBits shift();
     void unshift(NucleotideBits);
     // multiple characters version
-    LongTightString pop(unsigned short int);
+    LongTightString pop(len_t);
     void push(LongTightString);
-    LongTightString shift(unsigned short int);
+    LongTightString shift(len_t);
     void unshift(LongTightString);
 };
 
@@ -121,9 +145,9 @@ public:
   We store the first position of the substring in each string and the length of the substring
 */
 typedef struct {
-    uint16_t position1;
-    uint16_t position2;
-    uint16_t length;
+    len_t position1;
+    len_t position2;
+    len_t length;
 } Match;
 
 Match find_longest_suffix_substring(const LongTightString &, const LongTightString &);

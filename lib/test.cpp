@@ -42,9 +42,9 @@ void test2 (std::string s) {
 	cout << s << "*" ;
 	cout << t.unimport() << "-"
                   << s.length()  << "+" << t.unimport().length() << " ** ";
-	cout << t.length;
+	cout << t.length();
 	cout << "\n";
-	cout << t.sequence.to_string() << "\n";
+	cout << t.sequence().to_string() << "\n";
 	assert (s == t.unimport());
 }
 
@@ -59,8 +59,8 @@ void test3 (std::string s1, std::string s2, unsigned short int len) {
 
 void test4 (std::string s1) {
 	LongTightString t1(s1);
-	LongTightString t2 = t1.pop_first_character();
-	cout << s1 << "-" << t2.unimport() << "\n";
+	NucleotideBits t2 = t1.pop();
+	cout << s1 << "-" << decodeNucleotide(t2) << "\n";
 	// cout <<  l << "\n";
 	assert(s1.substr(1) == t2.unimport());
 }

@@ -49,7 +49,7 @@ endif
 
 CXXFLAGS+=-O0
 ## Uncomment the following line to enable compiler optimizations
-#CXXFLAGS+=-O2 -march=native
+CXXFLAGS+=-O2 -march=native
 
 ## Uncomment the following line to disable assertions
 #CXXFLAGS+=-DNDEBUG
