@@ -71,7 +71,7 @@ public:
     Fingerprint fingerprint;
 
     TightString(const std::string& s)
-		  :fingerprint(encode(s))
+                  :fingerprint(encode(s))
     {}
 
 
@@ -96,24 +96,38 @@ public:
     LongTightStringSequence sequence;
 
     LongTightString(const std::string& s)
-		  :length(0), sequence(0)
+                  :length(0), sequence(0)
     {
 		this->import(s);
     }
 
     std::string unimport(void);
     void import(const std::string&);
-    LongTightString pop_first_character();
+    // single character version
+    NucleotideBits pop();
+    void push(NucleotideBits);
+    NucleotideBits shift();
+    void unshift(NucleotideBits);
+    // multiple characters version
+    LongTightString pop(unsigned short int);
+    void push(LongTightString);
+    LongTightString shift(unsigned short int);
+    void unshift(LongTightString);
 };
 
 
+/*
+  A match is a common substring between two LongTightString.
+  We store the first position of the substring in each string and the length of the substring
+*/
 typedef struct {
     uint16_t position1;
     uint16_t position2;
     uint16_t length;
 } Match;
 
-void find_largest_common_substring(Match &, const LongTightString &, const LongTightString &);
+Match find_longest_suffix_substring(const LongTightString &, const LongTightString &);
+Match find_longest_prefix_substring(const LongTightString &, const LongTightString &);
 uint16_t overlap(const TightString &, const TightString &);
 uint16_t overlap(const LongTightString &, const LongTightString &);
 
