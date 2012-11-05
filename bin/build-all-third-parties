@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for d in *
+do
+    test -d $d && test -f $d/Makefile && (cd $d ; make)
+done
