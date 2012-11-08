@@ -20,11 +20,11 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #include <fstream>
 #include <assert.h>
 #include <zlib.h>
+#include "kseq.h"
 #include "tightString.hpp"
 #include <boost/foreach.hpp>
 #include <list>
 #include "MurmurHash3.h"
-#include "kseq.h"
 
 #define Kf 4
 
@@ -82,12 +82,14 @@ int main(void)
 		BOOST_FOREACH( Fingerprint f, seeds) {
 			unsigned int pos=0;
 			MurmurHash3_x86_32(&f, BLOOM_FILTER_SIZE_BITS, 0xB0F57EE3, &pos);
+			pos &= (BLOOM_FILTER_SIZE - 1);
 			if (bloom_table[pos])
 				good_fingerprints.push_front(f);		
 			else	
 				bloom_table[pos] = true;
 		}		
 	}
+	cout << good_fingerprints.size() << "\n";
 	kseq_destroy(seq);
 	gzclose(fp);
 
