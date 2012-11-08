@@ -69,11 +69,11 @@ void test4 (std::string s1) {
 void test5 (std::string s1) {
 	Fingerprint f = encode(s1);
 	Fingerprint rc = reverse_complement(f);
-	std::string s2 = decode(rc)
-	cout << s1 << "=" << f << " RevCompl " << rc << "=" << s2 << "\n";
+	std::string s2 = decode(rc, s1.length());
+	cout << s1.length() << "=" << s2.length() << "\n";
+	cout << s1 << "=" << hex <<  f << " RevCompl " << rc << "=" <<  s2 << "\n";
 	// cout <<  l << "\n";
-	std::reverse(s2.begin(), s2.end());
-	assert(s1 == s2);
+	assert(s1.compare(reverse_complement(s2)) == 0);
 }
 
 
@@ -168,6 +168,22 @@ int main()
 	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
 
 	cout << "TEST 5\n";
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGA");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAATA");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAATC");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGG");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAATG");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGT");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAATT");
 	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
 	test5("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
