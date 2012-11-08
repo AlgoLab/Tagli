@@ -62,7 +62,18 @@ void test4 (std::string s1) {
 	NucleotideBits t2 = t1.pop();
 	cout << s1 << "-" << decodeNucleotide(t2) << "\n";
 	// cout <<  l << "\n";
-	assert(s1.substr(1) == t2.unimport());
+	assert(s1[0] == decodeNucleotide(t2));
+}
+
+
+void test5 (std::string s1) {
+	Fingerprint f = encode(s1);
+	Fingerprint rc = reverse_complement(f);
+	std::string s2 = decode(rc)
+	cout << s1 << "=" << f << " RevCompl " << rc << "=" << s2 << "\n";
+	// cout <<  l << "\n";
+	std::reverse(s2.begin(), s2.end());
+	assert(s1 == s2);
 }
 
 
@@ -156,6 +167,13 @@ int main()
 	test4("CCCTAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	test4("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT");
 
+	cout << "TEST 5\n";
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test5("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test5("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test5("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+	test5("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+	test5("CCCTAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 
 	cout << "Starting speed-test..." << std::endl;
 	const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";

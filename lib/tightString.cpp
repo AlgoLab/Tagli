@@ -123,8 +123,8 @@ std::string LongTightString::unimport(void) {
   std::string s(_length, ' ');
   NucleotideBits t;
   for (unsigned short int i=0; i < _length; ++i) {
-	 t= _sequence[2*(_length-i-1)] + (_sequence[2*(_length-i-1)+1]*2);
-	 s[i]= decodeNucleotide(t & 0x3);
+         t= _sequence[2*(_length-i-1)] + (_sequence[2*(_length-i-1)+1]*2);
+         s[i]= decodeNucleotide(t & 0x3);
   }
   return s;
 }
@@ -184,4 +184,22 @@ NucleotideBits LongTightString::pop() {
   _sequence <<= 2;
   --_length;
   return t;
+}
+
+Fingerprint reverse_complement(const Fingerprint s) {
+	Fingerprint v = ~s;
+	assert(sizeof(v) == 64);
+// swap odd and even bits
+	v = ((v >> 1) & 0x5555555555555555) | ((v & 0x5555555555555555) << 1);
+// swap consecutive pairs
+	v = ((v >> 2) & 0x3333333333333333) | ((v & 0x3333333333333333) << 2);
+// swap nibbles ... 
+	v = ((v >> 4) & 0x0F0F0F0F0F0F0F0F) | ((v & 0x0F0F0F0F0F0F0F0F) << 4);
+// swap bytes
+	v = ((v >> 8) & 0x00FF00FF00FF00FF) | ((v & 0x00FF00FF00FF00FF) << 8);
+// swap 2-byte long pairs
+	v = ( v >> 16 & 0x0000FFFF0000FFFF) | ((v & 0x0000FFFF0000FFFF) << 16);
+// swap 4-byte long pairs
+	v = ( v >> 32             ) | ( v               << 32);
+	return v;
 }

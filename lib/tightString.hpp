@@ -55,7 +55,8 @@ Nucleotide decodeNucleotide(const NucleotideBits);
 NucleotideBits encodeNucleotide(const Nucleotide);
 Fingerprint encode(const std::string& k, const size_t start=0, const size_t len=std::string::npos);
 std::string decode(const Fingerprint, const unsigned short int);
-Fingerprint reverse_complement(const Fingerprint& f);
+Fingerprint reverse_complement(const Fingerprint f);
+//std::string reverse_complement(const std::string& s);
 
 
 
