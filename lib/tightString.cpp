@@ -188,9 +188,9 @@ NucleotideBits LongTightString::pop() {
 
 Fingerprint reverse_complement(const Fingerprint s) {
 	Fingerprint v = ~s;
-	assert(sizeof(v) == 64);
+//	assert(sizeof(v) == 64);
 // swap odd and even bits
-	v = ((v >> 1) & 0x5555555555555555) | ((v & 0x5555555555555555) << 1);
+//	v = ((v >> 1) & 0x5555555555555555) | ((v & 0x5555555555555555) << 1);
 // swap consecutive pairs
 	v = ((v >> 2) & 0x3333333333333333) | ((v & 0x3333333333333333) << 2);
 // swap nibbles ... 
@@ -202,4 +202,32 @@ Fingerprint reverse_complement(const Fingerprint s) {
 // swap 4-byte long pairs
 	v = ( v >> 32             ) | ( v               << 32);
 	return v;
+}
+
+
+static char _complement(char ch)
+{
+  switch(ch) {
+  case 'A':
+    return 'T';
+  case 'T':
+    return 'A';
+  case 'C':
+    return 'G';
+  case 'G':
+    return 'C';
+  }
+}
+
+//
+// Build reverse complement.
+//
+
+std::string reverse_complement(const std::string& seq)
+{
+  std::string r(seq);
+  std::reverse(r.begin(), r.end());
+  std::transform(r.begin(), r.end(), r.begin(), _complement);
+
+  return r;
 }
