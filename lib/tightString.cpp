@@ -217,6 +217,7 @@ static char _complement(char ch)
   case 'G':
     return 'C';
   }
+  return 'A';
 }
 
 //
