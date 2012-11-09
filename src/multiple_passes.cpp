@@ -25,6 +25,8 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #include <boost/foreach.hpp>
 #include <list>
 #include "MurmurHash3.h"
+#include "cxxmph/mph_index.h"
+
 
 #define Kf 4
 
@@ -89,18 +91,22 @@ int main(void)
 				bloom_table[pos] = true;
 		}		
 	}
+	bloom_table.resize(0); // reclaim space
 	cout << good_fingerprints.size() << "\n";
 	kseq_destroy(seq);
 	gzclose(fp);
 
 /*
-  Pass #2
-  
   Build a perfect hash storing only the Fingerprints occurring in at least two reads.
-
   We use the cmph library (cmph.sf.net) and the BDZ algorithm.
+  Each entry of the hash points to a putative junction site.
 */
+	cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
+	if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
+
 /*
+  Pass #2
+
 	fp = gzdopen(inputfile.c_str(), "r");
 	seq = kseq_init(fp);
 	while (kseq_read(seq) >= 0) {
@@ -115,7 +121,7 @@ int main(void)
 	printf("%d\t%d\t%d\n", n, slen, qlen);
 	kseq_destroy(seq);
 	gzclose(fp);
-
 */
+
 	return 0;
 }

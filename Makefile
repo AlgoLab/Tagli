@@ -384,7 +384,7 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 
 
 $(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(THIRDPARTY_DIR)/MurmurHash/MurmurHash3.cpp $(LIB_DIR)/tightString.o
-	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz
+	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz -lcxxmph
 
 
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp
