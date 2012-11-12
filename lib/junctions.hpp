@@ -34,14 +34,14 @@ public:
                                  // otherwise is a suffix
     std::vector<LongTightString> multiple_side;
 
-    void shift_junction(const int8_t); // movement <0 then single_side shortens
+    void shift_junction(const int8_t shift_len); // movement <0 then single_side shortens
                             // movement >0 then single_side enlarges
-    LongTigthString remove_multiple(const int8_t); // remove one of the prefixes/suffixes,
+    LongTightString remove_multiple(const int8_t); // remove one of the prefixes/suffixes,
                                                    // that at position given by the parameter
-    void add_multiple(const LongTigthString &);   // add a new prefix/suffix,
+    void add_multiple(const LongTightString &);   // add a new prefix/suffix,
     
 private:
-    find_largest_common_substring(const LongTightString &);
+    void find_largest_common_substring(const LongTightString &);
 };
 
 

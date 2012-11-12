@@ -140,7 +140,6 @@ public:
     LongTightString shift(len_t);
     void unshift(LongTightString);
 	LongTightString reverse_complement();
-
 };
 
 
