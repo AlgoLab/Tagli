@@ -21,7 +21,10 @@ along with this program; if not, see http://www.gnu.org/licenses/
 #include <iostream>
 #include <fstream>
 #include <assert.h>
-
+#include <vector>
+#include <algorithm>
+#include <bitset>
+#include <boost/foreach.hpp>
 
 using namespace std;
 
@@ -220,10 +223,6 @@ static char _complement(char ch)
   return 'A';
 }
 
-//
-// Build reverse complement.
-//
-
 std::string reverse_complement(const std::string& seq)
 {
   std::string r(seq);
@@ -231,4 +230,25 @@ std::string reverse_complement(const std::string& seq)
   std::transform(r.begin(), r.end(), r.begin(), _complement);
 
   return r;
+}
+
+/*
+  Compute the length of the Lcp, as the actual prefix is trivial to compute
+*/
+unsigned int longest_common_prefix(const vector<LongTightString> & strings) {
+	LongTightString old = strings.front();
+	unsigned int len = old.length();
+	BOOST_FOREACH( LongTightString s, strings ) {
+		len = min(len, longest_common_prefix(s, old));
+		if (len == 0) { break;}
+		old = s;
+	}
+	return len;
+}
+
+unsigned int longest_common_prefix(const LongTightString& s1, const LongTightString& s2) {
+	LongTightStringSequence diff = s1.sequence() ^ s2.sequence();
+	unsigned short int pos = 0;
+	for (; pos < s1.length() && !diff[2*pos] && !diff[2*pos+1]; pos++) {}
+	return pos;
 }

@@ -177,4 +177,13 @@ public:
 }
 */
 
+/*
+  compute the length of the longest common prefix/suffix of an array of
+  LongTightString(s) and of two LongTightStrings
+*/
+unsigned int longest_common_prefix(const std::vector<LongTightString>& strings);
+unsigned int longest_common_suffix(const std::vector<LongTightString>& strings);
+unsigned int longest_common_prefix(const LongTightString& s1, const LongTightString& s2);
+unsigned int longest_common_suffix(const LongTightString& s1, const LongTightString& s2);
+
 #endif
