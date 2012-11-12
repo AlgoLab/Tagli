@@ -107,7 +107,7 @@ public:
         this->import(s);
     }
 
-    explicit LongTightString(const LongTightString& lts)
+    LongTightString(const LongTightString& lts)
         :_length(lts._length), _sequence(lts._sequence)
     {}
 
