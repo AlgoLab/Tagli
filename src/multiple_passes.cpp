@@ -22,6 +22,7 @@
 #include <zlib.h>
 #include "kseq.h"
 #include "tightString.hpp"
+#include "junctions.hpp"
 #include <boost/foreach.hpp>
 #include <list>
 #include "MurmurHash3.h"
@@ -110,27 +111,28 @@ int main(void)
   Each entry of the hash points to a position into the junctions array.
   Each element of junctions is a putative junction site.
 */
-	cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
-	if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
-
+    cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
+    if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
+    Junction *junctions = new Junction[junction_index.size()];
 /*
   Pass #2
 
-	fp = gzdopen(inputfile.c_str(), "r");
-	seq = kseq_init(fp);
-	while (kseq_read(seq) >= 0) {
-		std::string all_seq[2] = { seq->seq.s, reverse_complement(seq->seq.s) };
-		BOOST_FOREACH( std::string x, all_seq ) {
-			LongTightString t(x);
-			for (unsigned int _i=0; _i < Kf; _i++ ) {
-				populate_junctions(t, seeds(_i));
-			}	
-		}	
-	}	
-	printf("%d\t%d\t%d\n", n, slen, qlen);
-	kseq_destroy(seq);
-	gzclose(fp);
+  Since cxxmph::SimpleMPHIndex returns an integer, we need an intermediate array of pointers to the putative junctions.
+  Such array is called junction_pointers
 */
 
-	return 0;
+    fp = gzopen(inputfile.c_str(), "r");
+    seq = kseq_init(fp);
+    while (kseq_read(seq) >= 0) {
+        extract_seeds(seq->seq.s, seeds);
+        for (unsigned int i=0; i< Kf; i++) {
+            LongTightString lts(seq.s);
+            junctions[junction_index(seeds[2*i])].single_side = lts;
+            junctions[junction_index(seeds[2*i+1])].single_side = reverse_complement(lts);
+        }
+    }
+    kseq_destroy(seq);
+    gzclose(fp);
+
+    return 0;
 }

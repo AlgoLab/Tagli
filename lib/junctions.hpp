@@ -44,5 +44,15 @@ private:
     void find_largest_common_substring(const LongTightString &);
 };
 
+class LeftJunction: Junction {
+
+};
+
+
+
+class RightJunction: Junction {
+
+};
+
 
 #endif
