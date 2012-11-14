@@ -126,9 +126,9 @@ int main(void)
     while (kseq_read(seq) >= 0) {
         extract_seeds(seq->seq.s, seeds);
         for (unsigned int i=0; i< Kf; i++) {
-            LongTightString lts(seq.s);
-            junctions[junction_index(seeds[2*i])].single_side = lts;
-            junctions[junction_index(seeds[2*i+1])].single_side = reverse_complement(lts);
+			 LongTightString lts(seq->seq.s);
+			 junctions[junction_index.index(seeds[2*i])].single_side = lts;
+			 junctions[junction_index.index(seeds[2*i+1])].single_side = lts.reverse_complement();
         }
     }
     kseq_destroy(seq);
