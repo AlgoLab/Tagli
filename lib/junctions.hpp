@@ -32,18 +32,22 @@ public:
     uint8_t multiple_side_length;
     LongTightString single_side; // is a prefix if is_left,
                                  // otherwise is a suffix
-    std::vector<LongTightString> multiple_side;
+    std::vector<LongTightString> multiple_side = {};
 
     void shift_junction(const int8_t shift_len); // movement <0 then single_side shortens
                             // movement >0 then single_side enlarges
     LongTightString remove_multiple(const int8_t); // remove one of the prefixes/suffixes,
                                                    // that at position given by the parameter
     void add_multiple(const LongTightString &);   // add a new prefix/suffix,
-    
+
+	Junction()
+		:is_left(false), multiple_side_length(0), single_side("")
+		{};
 private:
     void find_largest_common_substring(const LongTightString &);
 };
 
+/*
 class LeftJunction: Junction {
 
 };
@@ -53,6 +57,6 @@ class LeftJunction: Junction {
 class RightJunction: Junction {
 
 };
-
+*/
 
 #endif
