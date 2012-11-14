@@ -40,7 +40,6 @@ PROG_DIR=/usr/local/bin
 
 SRC_DIR= src
 THIRDPARTY_DIR := thirdparty
-THIRDPARTY_LIBS := $(wildcard ${THIRDPARTY_DIR}/*)
 
 LIB_DIR= lib
 TEST_DIR= t
@@ -148,7 +147,7 @@ endif
 
 COMPFLAGS=$(ARCH_DEP) $(WLBIT) $(OPTB) $(OPTP) $(OPTD) $(OPTPROF)
 
-INCLUDE=-I. -I$(LIB_DIR)/ $(foreach lib, $(THIRDPARTY_LIBS), -I $(lib))
+INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DIR)/kseq  -I$(THIRDPARTY_DIR)/cmph/cxxmph -I$(THIRDPARTY_DIR)/MurmurHash
 
 LIBS=-lm #-lgsl -lgslcblas #-lefence
 
@@ -185,7 +184,7 @@ base_SOURCE= \
 	$(SRC_DIR)/multiple_passes.cpp \
 
 
-all_header_files:=$(wildcard ${INCLUDE_DIR}/*.hpp ${THIRDPARTY_LIBs}/*/*.hpp ${THIRDPARTY_LIBs}/*/*.hpp)
+all_header_files:=$(wildcard ${INCLUDE_DIR}/*.hpp $(THIRDPARTY_DIR)/*/*.hpp $(THIRDPARTY_DIR)/*/*.hpp)
 
 #####################
 # System information
@@ -383,7 +382,8 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
 
 
-$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(THIRDPARTY_DIR)/MurmurHash/MurmurHash3.cpp $(LIB_DIR)/tightString.o
+$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(THIRDPARTY_DIR)/MurmurHash/MurmurHash3.cpp $(LIB_DIR)/tightString.o \
+  $(THIRDPARTY_DIR)/cmph/cxxmph/libcxxmph.la
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz -lcxxmph
 
 
