@@ -25,7 +25,7 @@
 #include "junctions.hpp"
 #include <boost/foreach.hpp>
 #include <list>
-#include "MurmurHash3.h"
+#include "cxxmph/MurmurHash3.h"
 #include "cxxmph/mph_index.h"
 
 
