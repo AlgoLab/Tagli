@@ -147,7 +147,9 @@ endif
 
 COMPFLAGS=$(ARCH_DEP) $(WLBIT) $(OPTB) $(OPTP) $(OPTD) $(OPTPROF)
 
-INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DIR)/kseq  -I$(THIRDPARTY_DIR)/cmph/cxxmph -I$(THIRDPARTY_DIR)/MurmurHash
+INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DIR)/kseq \
+-I$(THIRDPARTY_DIR)/cmph/cxxmph \
+-I$(THIRDPARTY_DIR)/MurmurHash
 
 LIBS=-lm #-lgsl -lgslcblas #-lefence
 
@@ -383,8 +385,8 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 
 
 $(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(THIRDPARTY_DIR)/MurmurHash/MurmurHash3.cpp $(LIB_DIR)/tightString.o \
-  $(THIRDPARTY_DIR)/cmph/cxxmph/libcxxmph.la
-	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz -lcxxmph
+  $(THIRDPARTY_DIR)/cmph/cxxmph/.libs/libcxxmph.a
+	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz
 
 
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp

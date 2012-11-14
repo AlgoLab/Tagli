@@ -26,7 +26,7 @@
 #include <boost/foreach.hpp>
 #include <list>
 #include "MurmurHash3.h"
-#include "cxxmph/mph_index.h"
+#include "mph_index.h"
 
 
 #define Kf 4
@@ -55,7 +55,7 @@ int main(void)
 {
     gzFile fp;
     kseq_t *seq;
-    std::string inputfile("reads.fastq");
+    std::string inputfile("reads.fastq.gz");
     Fingerprint seeds[2*Kf];
     /* seeds[] is an array of 2*Kf fingerprints extracted from a sequence s.
            Even-indexed elements refer to substrings of s, while odd-indexed elements refer to substrings of the
@@ -84,24 +84,26 @@ int main(void)
 
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
-    list<Fingerprint> good_fingerprints;
+    std::set<Fingerprint> good_fingerprints;
     vector<bool> bloom_table;
     bloom_table.resize(BLOOM_FILTER_SIZE, false);
 
     while (kseq_read(seq) >= 0) {
         extract_seeds(seq->seq.s, seeds);
-        BOOST_FOREACH( Fingerprint f, seeds) {
+        BOOST_FOREACH(Fingerprint f, seeds) {
             unsigned int pos=0;
             MurmurHash3_x86_32(&f, BLOOM_FILTER_SIZE_BITS, 0xB0F57EE3, &pos);
             pos &= (BLOOM_FILTER_SIZE - 1);
-            if (bloom_table[pos])
-                good_fingerprints.push_front(f);
+            if (bloom_table[pos]) {
+			    cout << hex << f  << "\n";
+                good_fingerprints.insert(f);
+			}
             else
                 bloom_table[pos] = true;
         }
     }
     bloom_table.resize(0); // reclaim space
-    cout << good_fingerprints.size() << "\n";
+    cout << "good_fingerprints size: " << good_fingerprints.size() << "\n";
     kseq_destroy(seq);
     gzclose(fp);
 
@@ -124,11 +126,22 @@ int main(void)
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
     while (kseq_read(seq) >= 0) {
-        extract_seeds(seq->seq.s, seeds);
-        for (unsigned int i=0; i< Kf; i++) {
-			 LongTightString lts(seq->seq.s);
-			 junctions[junction_index.index(seeds[2*i])].single_side = lts;
-			 junctions[junction_index.index(seeds[2*i+1])].single_side = lts.reverse_complement();
+        for (unsigned int i=0; i<Kf; i++) {
+			string s = seq->seq.s;
+			string rs = reverse_complement(seq->seq.s);
+			LongTightString lts_revcom(rs);
+			for (unsigned int j=0; j<2; j++) {
+				LongTightString lts(seq->seq.s);
+				extract_seeds(seq->seq.s, seeds);
+				Fingerprint f = seeds[2*i+j];
+				if (good_fingerprints.count(f)>0) {
+					cout << hex << f << ":" << j << endl;
+					if (j==0)
+						junctions[junction_index.index(f)].single_side = lts;
+					else
+						junctions[junction_index.index(f)].single_side = lts_revcom;
+				}
+			}
         }
     }
     kseq_destroy(seq);
