@@ -21,8 +21,8 @@ class dynamic_2bitset {
   ~dynamic_2bitset();
   dynamic_2bitset(uint32_t size, bool fill = false);
 
-  const uint8_t operator[](uint32_t i) const { return get(i); }
-  const uint8_t get(uint32_t i) const { 
+  uint8_t operator[](uint32_t i) const { return get(i); }
+  uint8_t get(uint32_t i) const {
     assert(i < size());
     assert((i >> 2) < data_.size());
     return (data_[(i >> 2)] >> (((i & 3) << 1)) & 3);
@@ -52,7 +52,7 @@ class dynamic_2bitset {
   uint32_t size_;
   bool fill_;
   std::vector<uint8_t> data_;
-  const uint8_t ones() { return std::numeric_limits<uint8_t>::max(); }
+  uint8_t ones() { return std::numeric_limits<uint8_t>::max(); }
 };
 
 static uint32_t nextpoweroftwo(uint32_t k) {
@@ -61,6 +61,7 @@ static uint32_t nextpoweroftwo(uint32_t k) {
   for (uint32_t i=1; i<sizeof(uint32_t)*CHAR_BIT; i<<=1) k = k | k >> i;
   return k+1;
 }
+
 // Interesting bit tricks that might end up here:
 // http://graphics.stanford.edu/~seander/bithacks.html#ZeroInWord
 // Fast a % (k*2^t)
