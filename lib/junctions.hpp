@@ -41,22 +41,11 @@ public:
     void add_multiple(const LongTightString &);   // add a new prefix/suffix,
 
   Junction()
-		:is_left(false), multiple_side_length(0), single_side("")
+		:is_left(false), multiple_side_length(0), single_side(""), multiple_side()
   {};
     
 private:
     void find_largest_common_substring(const LongTightString &);
 };
-
-class LeftJunction: Junction {
-
-};
-
-
-
-class RightJunction: Junction {
-
-};
-
 
 #endif
