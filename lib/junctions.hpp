@@ -32,7 +32,7 @@ public:
     uint8_t multiple_side_length;
     LongTightString single_side; // is a prefix if is_left,
                                  // otherwise is a suffix
-    std::vector<LongTightString> multiple_side = {};
+    std::vector<LongTightString> multiple_side;
 
     void shift_junction(const int8_t shift_len); // movement <0 then single_side shortens
                             // movement >0 then single_side enlarges
