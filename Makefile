@@ -1,11 +1,11 @@
-# Copyright (c) 2010, Michigan State University.  
+# Copyright (c) 2010, Michigan State University.
 # All rights reserved.
 #
 # Originally released under BSD License
 # Downloaded from https://github.com/ged-lab/khmer
 #
 # This file is a part of Tagli
-# 
+#
 # Copyright (c) 2012-2012, Gianluca Della Vedova (http://gianluca.dellavedova.org)
 # Copyright (c) 2012-2012, Yuri Pirola (http://www.algolab.eu/pirola)
 #
@@ -26,7 +26,7 @@
 
 SHELL=/bin/bash
 
-.PHONY: all printvars clean build-thirdparty #reall main remain build test-data-create retest-data-create dist prepare-dist install 
+.PHONY: all printvars clean build-thirdparty #reall main remain build test-data-create retest-data-create dist prepare-dist install
 
 DEFAULT_STATUS=production
 DEFAULT_STATUS=debug
@@ -40,6 +40,9 @@ PROG_DIR=/usr/local/bin
 
 SRC_DIR= src
 THIRDPARTY_DIR := thirdparty
+THIRDPARTY_LIBS := $(wildcard ${THIRDPARTY_DIR}/*)
+THIRDPARTY_DEPS := ${THIRDPARTY_DIR}/local-deps
+THIRDPARTY_DEPS_FULL := $(shell pwd)/${THIRDPARTY_DIR}/local-deps
 
 LIB_DIR= lib
 TEST_DIR= t
@@ -147,9 +150,7 @@ endif
 
 COMPFLAGS=$(ARCH_DEP) $(WLBIT) $(OPTB) $(OPTP) $(OPTD) $(OPTPROF)
 
-INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DIR)/kseq \
--I$(THIRDPARTY_DIR)/cmph/cxxmph \
--I$(THIRDPARTY_DIR)/MurmurHash
+INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DEPS)/include
 
 LIBS=-lm #-lgsl -lgslcblas #-lefence
 
@@ -178,7 +179,7 @@ COMPILING_DESC=$(CXX)-$(current_sys)-$(compbit)bit-status_$(STATUS)-prof_$(PROF)
 
 BIN_DIR= bin
 
-ALL_DIR= $(BIN_DIR) $(SRC_DIR) 
+ALL_DIR= $(BIN_DIR) $(SRC_DIR)
 
 
 
@@ -207,12 +208,7 @@ INNER_DIST_DIR= tagli-$(___SRC_DESC)-$(full_current_sys)
 FULL_DIST_DIR= $(DIST_DIR)/$(INNER_DIST_DIR)
 FULL_SRC_DIST_DIR= $(DIST_DIR)/tagli-$(___SRC_DESC)-src
 
-build	: .make $(BIN_DIR)/tagli1
-	echo "Configuration: ${COMPFLAGS}"; \
-	echo "Compiler:      ${CXX}"; \
-	echo "Symbols:       ${DFLAGS}"; \
-	echo 'All built!'
-
+all: .make thirdparty $(BIN_DIR)/tagli1 run_test
 
 reall	: clean all
 	@echo "Cleaned and rebuilt all!"
@@ -224,21 +220,10 @@ clean   :
 		$(DIST_DIR)/* t/test
 
 
-all: $(BIN_DIR)/tagli1 run_test 
-
-
-$(SRC_DIR)/options.c: $(SRC_DIR)/options.ggo
-	@echo " * Generating the configuration parser..."; \
-	gengetopt --output-dir=`dirname $@` \
-		--file-name=`basename $@ .c` < $<; \
-	mv $(SRC_DIR)/`basename $@ .c`.h $(INCLUDE_DIR)/
-
 .make   :  Makefile
 	@echo "Makefile modified! Cleaning enforced."; \
 	make clean
 	touch .make
-
-
 
 test-data-create	: $(test_data_create_PROG)
 	@ln -f $(test_data_create_PROG) $(BIN_DIR)
@@ -364,7 +349,7 @@ CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++
 ifeq ($(IS_G++)$(IS_C11), yesyes)
 # g++ >= 4.7
 CXXFLAGS+=-std=c++11
-else 
+else
 CXXFLAGS+=-std=c++0x
 endif
 
@@ -377,21 +362,42 @@ CXXFLAGS+=-O2 -march=native
 #CXXFLAGS+=-DNDEBUG
 
 
-.PHONY: all clean run_test
+.PHONY: all clean run_test thirdparty cmph kseq
 
+thirdparty: cmph kseq
+
+cmph: ${THIRDPARTY_DEPS}/cmph-built
+
+${THIRDPARTY_DEPS}/cmph-built:
+	@echo "Building and installing CMPH..." ; \
+	mkdir -pv ${THIRDPARTY_DEPS}/ && \
+	pushd ${THIRDPARTY_DIR}/cmph && \
+	./configure --enable-cxxmph --disable-shared --prefix=${THIRDPARTY_DEPS_FULL} && \
+	make clean && \
+	pushd cxxmph && \
+	make && \
+	make install && \
+	popd && \
+	popd && \
+	touch $@
+
+kseq: $(THIRDPARTY_DEPS)/include/kseq.h
+
+$(THIRDPARTY_DEPS)/include/kseq.h: ${THIRDPARTY_DIR}/kseq/kseq.h
+	mkdir -pv ${THIRDPARTY_DEPS}/include ; \
+	cp $< $@
 
 $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
 
 
-$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(THIRDPARTY_DIR)/MurmurHash/MurmurHash3.cpp $(LIB_DIR)/tightString.o \
-  $(THIRDPARTY_DIR)/cmph/cxxmph/.libs/libcxxmph.a
+$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz
 
 
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp
-	$(CXX) -c $(CXXFLAGS) -o $@  $(LIB_DIR)/tightString.cpp $(INCLUDE)
+	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
 
-run_test: build $(BIN_DIR)/test
-	time $(BIN_DIR)/test
+run_test: $(BIN_DIR)/test
+#	time $(BIN_DIR)/test
 
