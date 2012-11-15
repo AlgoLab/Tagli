@@ -24,10 +24,9 @@
 #include "tightString.hpp"
 #include "junctions.hpp"
 #include <boost/foreach.hpp>
-#include <list>
 #include "cxxmph/MurmurHash3.h"
 #include "cxxmph/mph_index.h"
-
+#include <set>
 
 #define Kf 4
 
