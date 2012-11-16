@@ -44,6 +44,22 @@ public:
 		:is_left(false), multiple_side_length(0), single_side(""), multiple_side()
   {};
 
+	void dump() {
+		std::cout << "Junction type: ";
+		if (is_left)
+			std::cout<< "left\n";
+		else
+			std::cout << "right\n";
+		std::cout << "Single: " << single_side.unimport() << std::endl;
+		std::cout << "Length (check): " << multiple_side.size();
+		if (multiple_side.size()==multiple_side_length)
+			std::cout << " (ok)\n";
+		else
+			std::cout << " (should be " << multiple_side_length << ")\n";
+		for (unsigned int i=0; i<multiple_side.size(); ++i) {
+			std::cout << i << ":" << multiple_side[i].unimport() << std::endl;
+		}
+	};
 private:
     void find_largest_common_substring(const LongTightString &);
 };
