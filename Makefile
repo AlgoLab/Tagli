@@ -391,7 +391,7 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
 
 
-$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
+$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/junctions.hpp $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz
 
 
