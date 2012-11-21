@@ -146,35 +146,34 @@ len_t overlap(Fingerprint f1, Fingerprint f2) {
 	return 0;
 }
 
-uint16_t overlap(const TightString & str1, const TightString & str2) {
+len_t overlap(const TightString & str1, const TightString & str2) {
 	return overlap(str1.fingerprint, str2.fingerprint);
 }
 
 
-/*
-uint16_t overlap(const LongTightString & str1, const LongTightString & str2) {
-	uint16_t len= 0;
-	uint16_t partial_len= 0;
-	cout << "3\n";
 
-	for(uint8_t pos1, pos2; partial_len>0; len+=partial_len) {
-		pos1= (str1.length - len) / KMER_LENGTH;
-		pos2= (str2.length - len) / KMER_LENGTH;
-		partial_len= overlap(str1.kmer[pos1], str2.kmer[pos2]);
-	}
-	return len;
-	for (uint16_t len= KMER_LENGTH, d=2; len>0; d+=2, len-- ) {
-		// cout << hex << f1 <<"\n";
-		// cout << f2 <<"\n";
-		// cout << "Len = " << len <<". Shift=" << d << "\n";
-		if (f1 == f2)
+len_t overlap(const LongTightString & str1, const LongTightString & str2) {
+	len_t len = std::min(str1.length(), str2.length());
+//	cout << str1.sequence() << "," << str2.sequence() << "=" << len << endl;
+	LongTightStringSequence s1 = str1.sequence();
+	LongTightStringSequence s2 = str2.sequence();
+//	cout << s1 << "," << s2 << "=" <<  (2*(LONGTIGHTSTRING_LEN/2 - len)) << endl;
+	s1 <<= (2*(LONGTIGHTSTRING_LEN/2 - len));
+//	cout << s1 << "," << s2 << endl;
+	s1 >>= (2*(LONGTIGHTSTRING_LEN/2 - len));
+//	cout << s1 << "," << s2 << endl;
+	s2 >>= 2*(str2.length() - len);
+//	cout << s1 << "," << s2 << endl;
+	for (; len>0; len-- ) {
+//	cout << s1 << "," << s2 << endl;
+		if (s1 == s2)
 			return len;
-		f1 = (f1 << 2);
-		f2 = ((f2 >> d) << d);
+		s2 >>= 2;
+		s1[(2*len)-1] = false;
+		s1[(2*len)-2] = false;
 	}
 	return 0;
 }
-*/
 
 // void find_largest_common_substring(Match & m, const LongTightString & s1, const LongTightString & s2)
 

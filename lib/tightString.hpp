@@ -94,6 +94,14 @@ class Kmer: public TigthString {
 
 typedef unsigned short int len_t;
 
+/* The LongTightString class is a compact representation of a DNA string no longer than LONGTIGHTSTRING_LEN/2 bps
+   using a LONGTIGHTSTRING_LEN bits bitset.
+
+   A string shorter than LONGTIGHTSTRING_LEN/2 characters uses the positions with smallest possible index.
+   Moreover in position 0 is stored the last character of the string, so that applying the method sequence()
+   gives a string that can be printed as an intuitive representation of the bitset.
+*/
+
 class LongTightString {
     // bit fields to store longer strings
 private:

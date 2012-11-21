@@ -130,21 +130,38 @@ int main(void)
 			string rs = reverse_complement(seq->seq.s);
 			LongTightString lts_revcom(rs);
 			for (unsigned int j=0; j<2; j++) {
-				LongTightString lts(seq->seq.s);
+				LongTightString lts_straigth(seq->seq.s);
 				extract_seeds(seq->seq.s, seeds);
 				Fingerprint f = seeds[2*i+j];
 				if (good_fingerprints.count(f)>0) {
+					// We map the fingerprint to a putative junction
 					cout << hex << f << ":" << j << endl;
+					uint64_t index = junction_index.index(f);
+					LongTightString lts("");
 					if (j==0)
-						junctions[junction_index.index(f)].single_side = lts;
+						lts = lts_straigth;
 					else
-						junctions[junction_index.index(f)].single_side = lts_revcom;
+						lts = lts_revcom;
+
+					if (junctions[index].single_side.length() == 0) {
+						// first time we visit the junction
+						junctions[index].single_side = lts;
+					} else {
+						LongTightString single_side = junctions[index].single_side;
+						len_t lts_left = overlap(lts, single_side);
+						len_t lts_lright = overlap(single_side, lts);
+					}
 				}
 			}
         }
     }
     kseq_destroy(seq);
     gzclose(fp);
+
+	for (unsigned int _i=0; _i<junction_index.size(); ++_i) {
+		junctions[_i].dump();
+	}
+
 
     return 0;
 }
