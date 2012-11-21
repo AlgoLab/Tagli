@@ -399,5 +399,5 @@ $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp 
 	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
 
 run_test: $(BIN_DIR)/test
-#	time $(BIN_DIR)/test
+	time $(BIN_DIR)/test
 
