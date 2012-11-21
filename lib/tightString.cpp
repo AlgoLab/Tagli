@@ -133,7 +133,7 @@ std::string LongTightString::unimport(void) {
 }
 
 
-uint16_t overlap(Fingerprint f1, Fingerprint f2) {
+len_t overlap(Fingerprint f1, Fingerprint f2) {
 	for (uint16_t len= KMER_LENGTH, d=2; len>0; d+=2, len-- ) {
 		// cout << hex << f1 <<"\n";
 		// cout << f2 <<"\n";

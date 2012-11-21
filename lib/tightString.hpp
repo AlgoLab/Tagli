@@ -155,8 +155,8 @@ typedef struct {
 
 Match find_longest_suffix_substring(const LongTightString &, const LongTightString &);
 Match find_longest_prefix_substring(const LongTightString &, const LongTightString &);
-uint16_t overlap(const TightString &, const TightString &);
-uint16_t overlap(const LongTightString &, const LongTightString &);
+len_t overlap(const TightString &, const TightString &);
+len_t overlap(const LongTightString &, const LongTightString &);
 
 /*
   The suffix array struct is actually a generalized suffix array, where we store explictly the sequence of each suffix
