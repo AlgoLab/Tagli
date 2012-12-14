@@ -28,7 +28,8 @@
 #include "cxxmph/mph_index.h"
 #include <set>
 
-#define Kf 4
+// _KF_ is the number of seeds extracted from each read
+#define _KF_ 4
 
 #define BLOOM_FILTER_SIZE_BITS 28
 #define BLOOM_FILTER_SIZE (1 << BLOOM_FILTER_SIZE_BITS)
@@ -41,12 +42,23 @@ using namespace std;
 */
 void extract_seeds(std::string s, Fingerprint seeds[]) {
     unsigned int l = s.length() - KMER_LENGTH;
-    for (unsigned int i=0; i < 2*Kf -2 ; i+=2) {
-        seeds[i] = encode(s, (size_t) (l * i)/(Kf - 1), (size_t) KMER_LENGTH);
+    for (unsigned int i=0; i < 2*_KF_ -2 ; i+=2) {
+        seeds[i] = encode(s, (size_t) (l * i)/(_KF_ - 1), (size_t) KMER_LENGTH);
         seeds[i+1] = reverse_complement(seeds[i]);
     }
-    seeds[2*Kf - 2] = encode(s, (size_t) l, (size_t) KMER_LENGTH);
-    seeds[2*Kf - 1] = reverse_complement(seeds[2*Kf - 2]);
+    seeds[2*_KF_ - 2] = encode(s, (size_t) l, (size_t) KMER_LENGTH);
+    seeds[2*_KF_ - 1] = reverse_complement(seeds[2*_KF_ - 2]);
+}
+/*
+  From each string (which is usually a read) we extract all substrings of length KMER_LENGTH
+*/
+std::vector<Fingerprint> extract_fingerprints(std::string s) {
+    unsigned int l = s.length() - KMER_LENGTH + 1;
+    std::vector<Fingerprint> result(l-1);
+    for (unsigned int i=0; i < l ; i++) {
+        result.push_back(encode(s, i, (size_t) KMER_LENGTH));
+    }
+    return result;
 }
 
 
@@ -55,14 +67,14 @@ int main(void)
     gzFile fp;
     kseq_t *seq;
     std::string inputfile("reads.fastq.gz");
-    Fingerprint seeds[2*Kf];
-    /* seeds[] is an array of 2*Kf fingerprints extracted from a sequence s.
-           Even-indexed elements refer to substrings of s, while odd-indexed elements refer to substrings of the
-           reverse-and-complement of s
+    Fingerprint seeds[2*_KF_];
+    /* seeds[] is an array of 2*_KF_ fingerprints extracted from a sequence s.
+       Even-indexed elements refer to substrings of s, while odd-indexed elements refer to substrings of the
+       reverse-and-complement of s
     */
 //  std::vector<Junction> junctions;
     /* junctions[] is an array of all interesting splicing junctions.
-           It is mainly an intermediate array required by the use of cxxmph
+       It is mainly an intermediate array required by the use of cxxmph
     */
 
 /*
@@ -94,9 +106,9 @@ int main(void)
             MurmurHash3_x86_32(&f, BLOOM_FILTER_SIZE_BITS, 0xB0F57EE3, &pos);
             pos &= (BLOOM_FILTER_SIZE - 1);
             if (bloom_table[pos]) {
-			    cout << hex << f  << "\n";
+                cout << hex << f  << "\n";
                 good_fingerprints.insert(f);
-			}
+            }
             else
                 bloom_table[pos] = true;
         }
@@ -112,6 +124,7 @@ int main(void)
   Each entry of the hash points to a position into the junctions array.
   Each element of junctions is a putative junction site.
 */
+    cout << "End pass #1\n";
     cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
     if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
     Junction *junctions = new Junction[junction_index.size()];

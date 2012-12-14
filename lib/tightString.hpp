@@ -1,19 +1,19 @@
 /*
-Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
-Copyright 2012-2012 Gianluca Della Vedova (http://gianluca.dellavedova.org)
+  Copyright 2007, 2008 Daniel Zerbino (zerbino@ebi.ac.uk)
+  Copyright 2012-2012 Gianluca Della Vedova (http://gianluca.dellavedova.org)
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  as published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, see http://www.gnu.org/licenses/
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, see http://www.gnu.org/licenses/
 */
 
 
@@ -73,8 +73,8 @@ public:
     Fingerprint fingerprint;
 
     TightString(const std::string& s)
-                  :fingerprint(encode(s))
-    {}
+        :fingerprint(encode(s))
+        {}
 
 
     std::string unimport(void) const;
@@ -85,10 +85,10 @@ private:
 };
 
 /*
-class Kmer: public TigthString {
-    // length == KMER_LENGTH
+  class Kmer: public TigthString {
+  // length == KMER_LENGTH
 
-};
+  };
 */
 
 
@@ -111,19 +111,19 @@ public:
 
     explicit LongTightString(const std::string& s)
         :_length(0), _sequence()
-    {
-        this->import(s);
-    }
+        {
+            this->import(s);
+        }
 
     LongTightString(const LongTightString& lts)
         :_length(lts._length), _sequence(lts._sequence)
-    {}
+        {}
 
-    len_t& length() {
+    len_t length() {
         return _length;
     }
 
-    const len_t& length() const {
+    len_t length() const {
         return _length;
     }
 
@@ -134,54 +134,84 @@ public:
     const LongTightStringSequence& sequence() const {
         return _sequence;
     }
+    bool operator== (const LongTightString &other) {
+        return (_length==other.length() && _sequence == other.sequence());
+    }
+
+    void update(const LongTightStringSequence& s, const len_t l) {
+        _sequence=s;
+        _length=l;
+    }
 
     std::string unimport(void);
     void import(const std::string&);
     // single character version
+    // all update the object
     NucleotideBits pop();
     void push(NucleotideBits);
     NucleotideBits shift();
     void unshift(NucleotideBits);
+
     // multiple characters version
     LongTightString pop(len_t);
-    void push(LongTightString);
-    LongTightString shift(len_t);
-    void unshift(LongTightString);
-	LongTightString reverse_complement();
+    void push(const LongTightString &);
+    LongTightString shift(len_t len);
+    void unshift(const LongTightString &);
+    LongTightString reverse_complement();
+
+    LongTightString prefix(const len_t length);
+    LongTightString suffix(const len_t length);
+    bool is_prefix(const LongTightString & s);
+    bool is_suffix(const LongTightString & s);
+    LongTightString substring(const len_t begin, const len_t end) {return (this->prefix(end+1)).suffix(end-begin);};
 };
 
+
+/* Compute the suffixes or prefixes of a LongThightString
+   the suffixes are ordered from shortest to longest,
+   so that at position i we can find the i-long suffix
+*/
+const std::vector<LongTightString> build_suffixes(LongTightString x);
+const std::vector<LongTightString> build_prefixes(LongTightString x);
 
 /*
   A match is a common substring between two LongTightString.
   We store the first position of the substring in each string and the length of the substring
 */
-typedef struct {
-    len_t position1;
-    len_t position2;
+class Match {
+public:
+    len_t begin1;
+    len_t begin2;
     len_t length;
-} Match;
 
-Match find_longest_suffix_substring(const LongTightString &, const LongTightString &);
-Match find_longest_prefix_substring(const LongTightString &, const LongTightString &);
+    explicit Match(const len_t p1, const len_t p2, const len_t l)
+        :begin1(p1), begin2(p2), length(l)
+        {}
+};
+
+Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2);
+Match find_longest_prefix_substring(const LongTightString & s1, const LongTightString & s2);
+Match find_largest_common_substring(const LongTightString & s1, const LongTightString & s2);
 len_t overlap(const TightString &, const TightString &);
 len_t overlap(const LongTightString &, const LongTightString &);
-
+len_t longest_left_overlap(const LongTightString & s, const std::vector<LongTightString>  & v);
+len_t longest_right_overlap(const LongTightString & s, const std::vector<LongTightString>  & v);
 /*
   The suffix array struct is actually a generalized suffix array, where we store explictly the sequence of each suffix
-typedef struct {
-    LongTightString suffix;
-    uint8_t original_sequence;
-} SuffixArrayElement;
+  typedef struct {
+  LongTightString suffix;
+  uint8_t original_sequence;
+  } SuffixArrayElement;
 
-class SuffixArray {
-public:
-    array vector<SuffixArrayElement>;
+  class SuffixArray {
+  public:
+  array vector<SuffixArrayElement>;
 
-    SuffixArray(const std::string&);
-    SuffixArray(const LongTightString&);
+  SuffixArray(const std::string&);
+  SuffixArray(const LongTightString&);
 
 
-}
+  }
 */
 
 /*
