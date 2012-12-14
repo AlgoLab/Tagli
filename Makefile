@@ -398,6 +398,12 @@ $(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/junctions.hpp $(LIB
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp
 	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
 
-run_test: $(BIN_DIR)/test
+$(LIB_DIR)/junctions.o: $(LIB_DIR)/junctions.cpp $(LIB_DIR)/junctions.hpp $(LIB_DIR)/globals.hpp $(LIB_DIR)/tightString.o
+	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
+
+run_test: $(BIN_DIR)/test build
 	time $(BIN_DIR)/test
+
+
+build: $(BIN_DIR)/tagli1
 
