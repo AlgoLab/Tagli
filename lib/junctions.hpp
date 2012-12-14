@@ -26,6 +26,8 @@
 #include "tightString.hpp"
 #include <vector>
 
+#define THRESHOLD_MERGE_SUBSTRINGS KMER_LENGTH
+
 class Junction {
 public:
     bool is_left; // true if left junction

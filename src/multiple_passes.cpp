@@ -27,6 +27,7 @@
 #include "cxxmph/MurmurHash3.h"
 #include "cxxmph/mph_index.h"
 #include <set>
+#include "log.hpp"
 
 // _KF_ is the number of seeds extracted from each read
 #define _KF_ 4
@@ -64,6 +65,8 @@ std::vector<Fingerprint> extract_fingerprints(std::string s) {
 
 int main(void)
 {
+    initialize_logger();
+    INFO("Tagli started");
     gzFile fp;
     kseq_t *seq;
     std::string inputfile("reads.fastq.gz");
