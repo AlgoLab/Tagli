@@ -36,34 +36,45 @@ public:
                                  // otherwise is a suffix
     std::vector<LongTightString> multiple_side;
 
+    Junction()
+        :is_left(false), multiple_side_length(0), single_side(""), multiple_side()
+        {};
+
+
     void shift_junction(const int8_t shift_len); // movement <0 then single_side shortens
-                            // movement >0 then single_side enlarges
-    LongTightString remove_multiple(const int8_t); // remove one of the prefixes/suffixes,
-                                                   // that at position given by the parameter
-    void add_multiple(const LongTightString &);   // add a new prefix/suffix,
+    // movement >0 then single_side enlarges
 
-  Junction()
-		:is_left(false), multiple_side_length(0), single_side(""), multiple_side()
-  {};
+    // remove one of the prefixes/suffixes,
+    // that at position given by the parameter
+    LongTightString remove_multiple(const int8_t pos);
 
-	void dump() {
-		std::cout << "Junction type: ";
-		if (is_left)
-			std::cout<< "left\n";
-		else
-			std::cout << "right\n";
-		std::cout << "Single: " << single_side.unimport() << std::endl;
-		std::cout << "Length (check): " << multiple_side.size();
-		if (multiple_side.size()==multiple_side_length)
-			std::cout << " (ok)\n";
-		else
-			std::cout << " (should be " << multiple_side_length << ")\n";
-		for (unsigned int i=0; i<multiple_side.size(); ++i) {
-			std::cout << i << ":" << multiple_side[i].unimport() << std::endl;
-		}
-	};
-private:
-    void find_largest_common_substring(const LongTightString &);
+    // add a new prefix/suffix,
+    void add_multiple(const LongTightString & s);
+
+    // Check if s obsoletes some components of the multiple_side
+    void clean_multiple(const LongTightString & s);
+
+    void move_border(len_t);
+    void add_read(LongTightString read);
+
+    void dump() {
+        std::cout << "Junction type: ";
+        if (is_left)
+            std::cout<< "left\n";
+        else
+            std::cout << "right\n";
+        std::cout << "Single: " << single_side.unimport() << std::endl;
+        std::cout << "Length (check): " << multiple_side.size();
+        if (multiple_side.size()==multiple_side_length)
+            std::cout << " (ok)\n";
+        else
+            std::cout << " (should be " << multiple_side_length << ")\n";
+        for (unsigned int i=0; i<multiple_side.size(); ++i) {
+            std::cout << i << ":" << multiple_side[i].unimport() << std::endl;
+        }
+    };
+// private:
+//     void find_largest_common_substring(const LongTightString &);
 };
 
 #endif

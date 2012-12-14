@@ -138,46 +138,93 @@ int main(void)
   Such array is called junction_pointers
 */
 
+    cout << "Begin pass #2\n";
+
+
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
     while (kseq_read(seq) >= 0) {
-        for (unsigned int i=0; i<Kf; i++) {
-			string s = seq->seq.s;
-			string rs = reverse_complement(seq->seq.s);
-			LongTightString lts_revcom(rs);
-			for (unsigned int j=0; j<2; j++) {
-				LongTightString lts_straigth(seq->seq.s);
-				extract_seeds(seq->seq.s, seeds);
-				Fingerprint f = seeds[2*i+j];
-				if (good_fingerprints.count(f)>0) {
-					// We map the fingerprint to a putative junction
-					cout << hex << f << ":" << j << endl;
-					uint64_t index = junction_index.index(f);
-					LongTightString lts("");
-					if (j==0)
-						lts = lts_straigth;
-					else
-						lts = lts_revcom;
+        extract_seeds(seq->seq.s, seeds);
+        string s = seq->seq.s;
+        string rs = reverse_complement(seq->seq.s);
+        LongTightString lts_revcom(rs);
+        LongTightString lts_straigth(s);
+        unsigned int kinds[2] = {0, 1};
 
-					if (junctions[index].single_side.length() == 0) {
-						// first time we visit the junction
-						junctions[index].single_side = lts;
-					} else {
-						LongTightString single_side = junctions[index].single_side;
-						len_t lts_left = overlap(lts, single_side);
-						len_t lts_lright = overlap(single_side, lts);
-					}
-				}
-			}
+        cout << "Read: " << seq->seq.s << endl;
+        for (unsigned int i=0; i<_KF_; i++) {
+            for (auto j : kinds) {
+                Fingerprint f = seeds[2*i+j];
+                if (good_fingerprints.count(f) > 0) {
+                    // We map the fingerprint to a putative junction
+                    cout << hex << f << ":" << j << endl;
+                    uint64_t index = junction_index.index(f);
+                    (j==0) ? junctions[index].add_read(lts_straigth) : junctions[index].add_read(lts_revcom);
+                }
+            }
         }
     }
     kseq_destroy(seq);
     gzclose(fp);
 
-	for (unsigned int _i=0; _i<junction_index.size(); ++_i) {
-		junctions[_i].dump();
-	}
+/*
+  Pass #3:
+  Remove from junctions all invalid junctions, i.e. those without a multiple_side
+  At the same time keep a vector valid_indices of the indices of correct junctions
+
+  We estimate an initial size of valid_indices equal to half of the current number of junctions. The correctness isn't
+  affected by the choice.
+  At the end we resize the vector to avoid wasting space.
+
+  TODO: determine if it is beneficial to copy the valid entries of junction to a new vector.
+*/
+    cout << "Begin pass #3\n";
+    std::vector<unsigned int> valid_indices(junction_index.size()/2);
+    for (unsigned int i=0; i<junction_index.size(); i++)
+        if (junctions[i].multiple_side_length > 0)
+            valid_indices.push_back(i);
+    valid_indices.shrink_to_fit();
 
 
-    return 0;
+/*
+  Pass #4:
+
+  Refine the valid junctions by using all possible fingerprints from the read.
+  In this pass no new junction can be created.
+*/
+
+    cout << "Begin pass #4\n";
+    fp = gzopen(inputfile.c_str(), "r");
+    seq = kseq_init(fp);
+    while (kseq_read(seq) >= 0) {
+        std::vector<Fingerprint> fingerprints = extract_fingerprints(seq->seq.s);
+        string s = seq->seq.s;
+        string rs = reverse_complement(seq->seq.s);
+        LongTightString lts_revcom(rs);
+        LongTightString lts_straigth(s);
+        unsigned int kinds[2] = {0, 1};
+
+        for (auto f : fingerprints)
+            for (auto j : kinds) {
+                if (j==0 && good_fingerprints.count(f) > 0)
+                    junctions[junction_index.index(f)].add_read(lts_straigth);
+                if (j==1 && good_fingerprints.count(~f) > 0)
+                    junctions[junction_index.index(~f)].add_read(lts_revcom);
+            }
+    }
+    kseq_destroy(seq);
+    gzclose(fp);
+/*
+  Pass:
+
+  Clean the junctions by merging together similar multiple_side components.
+*/
+
+
+/*
+  Finally output the junctions
+*/
+    cout << "Begin Output\n";
+    for (auto i : valid_indices)
+        junctions[i].dump();
 }

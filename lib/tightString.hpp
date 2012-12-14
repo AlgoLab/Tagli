@@ -31,8 +31,8 @@ namespace std { class type_info; }
 #include <stdint.h>
 #include <cstdint>
 #include <algorithm>
-
-
+#include <vector>
+#include <functional>
 
 typedef unsigned short int NucleotideBits;
 // Just a sequence string, but with just two bits per character
@@ -222,5 +222,13 @@ unsigned int longest_common_prefix(const std::vector<LongTightString>& strings);
 unsigned int longest_common_suffix(const std::vector<LongTightString>& strings);
 unsigned int longest_common_prefix(const LongTightString& s1, const LongTightString& s2);
 unsigned int longest_common_suffix(const LongTightString& s1, const LongTightString& s2);
+Match find_longest_common_substring(const LongTightString& s1, const LongTightString& s2);
+
+/*
+  merge two LongTightStringSequences
+*/
+
+LongTightStringSequence merge(const LongTightStringSequence& s1, const LongTightStringSequence& s2, const len_t ov);
+LongTightStringSequence merge(const LongTightString& s1, const LongTightString& s2);
 
 #endif
