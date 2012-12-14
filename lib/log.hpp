@@ -49,6 +49,7 @@
 
 #include <typeinfo>
 
+#define log_configuration_default_file "logging.conf"
 
 int initialize_logger(void);
 

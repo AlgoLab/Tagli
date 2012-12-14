@@ -66,7 +66,7 @@ std::vector<Fingerprint> extract_fingerprints(std::string s) {
 int main(void)
 {
     initialize_logger();
-    INFO("Tagli started");
+    ROOT_INFO("Tagli started");
     gzFile fp;
     kseq_t *seq;
     std::string inputfile("reads.fastq.gz");

@@ -152,7 +152,7 @@ COMPFLAGS=$(ARCH_DEP) $(WLBIT) $(OPTB) $(OPTP) $(OPTD) $(OPTPROF)
 
 INCLUDE=-I. -I$(LIB_DIR)/ -I$(THIRDPARTY_DEPS)/include
 
-LIBS=-lm #-lgsl -lgslcblas #-lefence
+LIBS=-lz -lboost_filesystem -lboost_system -llog4cxx
 
 override ADD_DFLAGS:=$(patsubst %,-%,$(subst :, ,$(PERS_DEFINE)))
 
@@ -392,7 +392,7 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 
 
 $(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
-	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) -lz
+	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) $(LIBS)
 
 
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp
