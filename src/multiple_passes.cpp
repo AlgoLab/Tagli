@@ -247,5 +247,5 @@ int main(void)
 */
     ROOT_INFO("Begin Output");
     for (auto i : valid_indices)
-        junctions[i].dump();
+        cout << junctions[i].dump() << endl;
 }
