@@ -25,6 +25,8 @@
 #include <assert.h>
 #include "tightString.hpp"
 #include <vector>
+#include <log.hpp>
+
 
 #define THRESHOLD_MERGE_SUBSTRINGS KMER_LENGTH
 

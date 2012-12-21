@@ -105,13 +105,15 @@ int main(void)
     bloom_table.resize(BLOOM_FILTER_SIZE, false);
 
     while (kseq_read(seq) >= 0) {
+        ROOT_TRACE("Read: " << seq->seq.s);
         extract_seeds(seq->seq.s, seeds);
         BOOST_FOREACH(Fingerprint f, seeds) {
             unsigned int pos=0;
+            ROOT_TRACE("checking fingerprint: " << f);
             MurmurHash3_x86_32(&f, BLOOM_FILTER_SIZE_BITS, 0xB0F57EE3, &pos);
             pos &= (BLOOM_FILTER_SIZE - 1);
             if (bloom_table[pos]) {
-                cout << hex << f  << "\n";
+                ROOT_TRACE("inserted fingerprint: " << f);
                 good_fingerprints.insert(f);
             }
             else
@@ -119,7 +121,9 @@ int main(void)
         }
     }
     bloom_table.resize(0); // reclaim space
-    cout << "good_fingerprints size: " << good_fingerprints.size() << "\n";
+    ROOT_TRACE("good_fingerprints dump");
+    ROOT_TRACE(good_fingerprints);
+    ROOT_DEBUG("good_fingerprints size: " << good_fingerprints.size());
     kseq_destroy(seq);
     gzclose(fp);
 
@@ -129,7 +133,7 @@ int main(void)
   Each entry of the hash points to a position into the junctions array.
   Each element of junctions is a putative junction site.
 */
-    cout << "End pass #1\n";
+    ROOT_INFO("End pass #1");
     cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
     if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
     Junction *junctions = new Junction[junction_index.size()];
@@ -140,7 +144,7 @@ int main(void)
   Such array is called junction_pointers
 */
 
-    cout << "Begin pass #2\n";
+    ROOT_INFO("Begin pass #2");
 
 
     fp = gzopen(inputfile.c_str(), "r");
@@ -153,14 +157,21 @@ int main(void)
         LongTightString lts_straigth(s);
         unsigned int kinds[2] = {0, 1};
 
-        cout << "Read: " << seq->seq.s << endl;
+        ROOT_TRACE("Read: " << s);
         for (unsigned int i=0; i<_KF_; i++) {
             for (auto j : kinds) {
                 Fingerprint f = seeds[2*i+j];
                 if (good_fingerprints.count(f) > 0) {
                     // We map the fingerprint to a putative junction
-                    cout << hex << f << ":" << j << endl;
+                    ROOT_DEBUG(f << ":" << j);
                     uint64_t index = junction_index.index(f);
+                    ROOT_DEBUG("index = " << index);
+                    ROOT_DEBUG("j=" << j);
+                    ROOT_DEBUG("Single side: " << junctions[index].dump());
+                    ROOT_DEBUG("Read 0");
+                    ROOT_DEBUG(lts_straigth.dump());
+                    ROOT_DEBUG("Read 1");
+                    ROOT_DEBUG(lts_revcom.dump());
                     (j==0) ? junctions[index].add_read(lts_straigth) : junctions[index].add_read(lts_revcom);
                 }
             }
@@ -168,6 +179,7 @@ int main(void)
     }
     kseq_destroy(seq);
     gzclose(fp);
+    ROOT_DEBUG("End pass #2");
 
 /*
   Pass #3:
@@ -180,11 +192,14 @@ int main(void)
 
   TODO: determine if it is beneficial to copy the valid entries of junction to a new vector.
 */
-    cout << "Begin pass #3\n";
+    ROOT_DEBUG("Begin pass #3");
+    ROOT_DEBUG("Junctions");
     std::vector<unsigned int> valid_indices(junction_index.size()/2);
     for (unsigned int i=0; i<junction_index.size(); i++)
-        if (junctions[i].multiple_side_length > 0)
+        if (junctions[i].multiple_side_length > 0) {
+            ROOT_DEBUG(junctions[i].dump());
             valid_indices.push_back(i);
+        }
     valid_indices.shrink_to_fit();
 
 
@@ -195,7 +210,7 @@ int main(void)
   In this pass no new junction can be created.
 */
 
-    cout << "Begin pass #4\n";
+    ROOT_DEBUG("Begin pass #4");
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
     while (kseq_read(seq) >= 0) {
@@ -208,10 +223,14 @@ int main(void)
 
         for (auto f : fingerprints)
             for (auto j : kinds) {
-                if (j==0 && good_fingerprints.count(f) > 0)
+                if (j==0 && good_fingerprints.count(f) > 0) {
+                    ROOT_DEBUG(lts_straigth.dump());
                     junctions[junction_index.index(f)].add_read(lts_straigth);
-                if (j==1 && good_fingerprints.count(~f) > 0)
+                }
+                if (j==1 && good_fingerprints.count(~f) > 0) {
+                    ROOT_DEBUG(lts_revcom.dump());
                     junctions[junction_index.index(~f)].add_read(lts_revcom);
+                }
             }
     }
     kseq_destroy(seq);
@@ -226,7 +245,7 @@ int main(void)
 /*
   Finally output the junctions
 */
-    cout << "Begin Output\n";
+    ROOT_INFO("Begin Output");
     for (auto i : valid_indices)
         junctions[i].dump();
 }

@@ -48,6 +48,8 @@ void Junction::add_read(LongTightString read) {
     }
     len_t read_left = overlap(read, single_side);
     len_t read_right = overlap(single_side, read);
+    // ROOT_TRACE("Single side: " << single_side);
+    // ROOT_TRACE("Read       : " << read);
     Match read_prefix_substring = find_longest_prefix_substring(read, single_side);
     // Match read_suffix_substring = find_longest_suffix_substring(read, single_side);
     // Match read_substring_prefix = find_longest_prefix_substring(single_side, read);
