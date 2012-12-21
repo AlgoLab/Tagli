@@ -402,14 +402,14 @@ LongTightString LongTightString::shift(len_t length) {
 void LongTightString::push(const LongTightString & s) {
     LongTightStringSequence new_sequence = s.sequence();
     len_t new_length = s.length();
-    _sequence <<= (2 * new_length);
+    _sequence <<= new_length;
     _sequence |= new_sequence;
     _length += new_length;
 }
 void LongTightString::unshift(const LongTightString & s) {
     LongTightStringSequence new_sequence = s.sequence();
     len_t new_length = s.length();
-    new_sequence <<= (2 * _length);
+    new_sequence <<= (2 * new_length);
     _sequence |= new_sequence;
     _length += new_length;
 }
