@@ -28,6 +28,8 @@
 #include "cxxmph/mph_index.h"
 #include <set>
 #include "log.hpp"
+#include <sstream>
+#include "prettyprint.hpp"
 
 // _KF_ is the number of seeds extracted from each read
 #define _KF_ 4

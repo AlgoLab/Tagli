@@ -364,7 +364,7 @@ CXXFLAGS+=-O2 -march=native
 
 .PHONY: all clean run_test thirdparty cmph kseq
 
-thirdparty: cmph kseq
+thirdparty: cmph kseq cxx-prettyprint
 
 cmph: ${THIRDPARTY_DEPS}/cmph-built
 
@@ -387,11 +387,15 @@ $(THIRDPARTY_DEPS)/include/kseq.h: ${THIRDPARTY_DIR}/kseq/kseq.h
 	mkdir -pv ${THIRDPARTY_DEPS}/include ; \
 	cp $< $@
 
+$(THIRDPARTY_DEPS)/include/prettyprint.hpp: ${THIRDPARTY_DIR}/cxx-prettyprint/prettyprint.hpp
+	mkdir -pv ${THIRDPARTY_DEPS}/include ; \
+	cp $< $@
+
 $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
 
 
-$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
+$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a $(THIRDPARTY_DEPS)/include/prettyprint.hpp
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) $(LIBS)
 
 

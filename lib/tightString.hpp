@@ -33,6 +33,7 @@ namespace std { class type_info; }
 #include <algorithm>
 #include <vector>
 #include <functional>
+#include <sstream>
 
 typedef unsigned short int NucleotideBits;
 // Just a sequence string, but with just two bits per character
@@ -164,6 +165,13 @@ public:
     bool is_prefix(const LongTightString & s);
     bool is_suffix(const LongTightString & s);
     LongTightString substring(const len_t begin, const len_t end) {return (this->prefix(end+1)).suffix(end-begin);};
+
+    std::string dump() {
+        std::stringstream result;
+        result << "sequence: " << this->unimport() << ", length: " << _length << ", encoded " << _sequence ;
+        return result.str();
+    }
+
 };
 
 
