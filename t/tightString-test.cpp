@@ -23,14 +23,11 @@
 #include <algorithm>
 #include <vector>
 
+using namespace std;
 
-std::string unimportTester (std::string s) {
-    TightString t(s);
-    return t.unimport();
-}
-
-TEST(TightString, unimport) {
-    std::vector<std::string> items = {
+class TightStringTest : public testing::Test {
+protected:
+    vector<string> kmers = {
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC",
         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG",
@@ -46,5 +43,70 @@ TEST(TightString, unimport) {
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
     };
-    for (auto x : items) { EXPECT_EQ(x, unimportTester(x)); }
+
+};
+
+class LongTightStringTest : public TightStringTest {
+protected:
+    vector<string> strings = {""};
+    virtual void SetUp() {
+        for (len_t len = 1; len <= 4; len++)
+            for (Fingerprint f = 0; f < pow(4, len); f++)
+                strings.push_back(decode(f, len));
+        strings.insert(strings.end(), kmers.begin(), kmers.end());
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+    }
+};
+
+
+TEST_F(TightStringTest, unimport) {
+    for (auto x : kmers) {
+        TightString t(x);
+        EXPECT_EQ(x.length(), t.unimport().length());
+        EXPECT_EQ(x, t.unimport());
+    }
 }
+
+const vector<string> build_suffixes(string s) {
+    vector<string> result;
+    for(size_t len = s.length(); len > 0; --len) {
+        result.push_back(s.substr(0, len));
+    }
+    return result;
+}
+
+
+
+
+
+TEST_F(LongTightStringTest, shift) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        LongTightString lts(x);
+        NucleotideBits z = lts.shift();
+        string tested = lts.unimport();
+        string ok = x.substr(1, x.length() - 1);
+        EXPECT_EQ(ok.length(), tested.length());
+        EXPECT_EQ(ok, tested);
+    }
+}
+/*
+  TEST_F(LongTightStringTest, build_suffixes) {
+  kmers.insert(kmers.end(), strings.begin(), strings.end());
+  for (auto x : kmers) {
+  LongTightString lts(x);
+  vector<LongTightString> ltsvec = build_suffixes(lts);
+  vector<string> suff_test;
+  suff_test.resize(ltsvec.size());
+  transform(ltsvec.begin(), ltsvec.end(), suff_test.begin(),
+  [](LongTightString p) { return(p.unimport()); });
+  vector<string> suff_ok = build_suffixes(x);
+  EXPECT_EQ(suff_ok.size(), suff_test.size());
+  EXPECT_TRUE(equal(suff_ok.begin(), suff_ok.end(), suff_test.begin()));
+  }
+  }
+*/

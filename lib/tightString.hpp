@@ -195,6 +195,12 @@ public:
     explicit Match(const len_t p1, const len_t p2, const len_t l)
         :begin1(p1), begin2(p2), length(l)
         {}
+
+    std::string dump() {
+        std::stringstream result;
+        result << "begin1: " << begin1 << ", begin2: " << begin1 << ", length: " << length ;
+        return result.str();
+    }
 };
 
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2);

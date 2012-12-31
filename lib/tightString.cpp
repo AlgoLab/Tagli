@@ -309,7 +309,7 @@ const std::vector<LongTightString> build_suffixes(LongTightString x) {
     std::vector<LongTightString> sa;
     sa.reserve(x.length()+1);
     len_t max=x.length();
-    for(len_t len=0; len <= max; len--) {
+    for(len_t len=0; len <= max; len++) {
         sa.push_back(x);
         x.shift();
     }
@@ -320,7 +320,7 @@ const std::vector<LongTightString> build_prefixes(LongTightString x) {
     std::vector<LongTightString> sa;
     sa.reserve(x.length()+1);
     len_t max=x.length();
-    for(len_t len=0; len <= max; len--) {
+    for(len_t len=0; len <= max; len++) {
         sa.push_back(x);
         x.pop();
     }
