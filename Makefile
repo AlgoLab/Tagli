@@ -215,9 +215,10 @@ reall	: clean all
 
 clean   :
 	@echo "Cleaning objects and programs" ; \
-	rm -rf $(BIN_DIR)/* $(LIB_DIR)/*.o \
-		$(SRC_DIR)/options.c $(INCLUDE_DIR)/options.h \
-		$(DIST_DIR)/* t/test
+	find . -name '*.[ao]' -delete ; find . -name '*.la' -delete ; \
+	rm -rf $(BIN_DIR)/* \
+	$(SRC_DIR)/options.c $(INCLUDE_DIR)/options.h \
+	$(DIST_DIR)/*
 
 
 .make   :  Makefile
@@ -343,7 +344,7 @@ $(info The compiler does not seem to belong to the gcc series... Using reasonabl
 endif
 
 
-CXXFLAGS=-g -fPIC -Wall -Wextra -pedantic -Weffc++
+CXXFLAGS=-g -fPIC -O0
 
 
 ifeq ($(IS_G++)$(IS_C11), yesyes)
@@ -353,10 +354,9 @@ else
 CXXFLAGS+=-std=c++0x
 endif
 
-
-CXXFLAGS+=-O0
 ## Uncomment the following line to enable compiler optimizations
 CXXFLAGS+=-O2 -march=native
+CXXFLAGS_EXTRA= -Wall -Wextra -pedantic -Weffc++
 
 ## Uncomment the following line to disable assertions
 #CXXFLAGS+=-DNDEBUG
@@ -364,11 +364,11 @@ CXXFLAGS+=-O2 -march=native
 
 .PHONY: all clean run_test thirdparty cmph kseq
 
-thirdparty: cmph kseq cxx-prettyprint
+thirdparty: cmph kseq cxx-prettyprint gtest
 
-cmph: ${THIRDPARTY_DEPS}/cmph-built
+cmph: $(THIRDPARTY_DEPS)/lib/libcxxmph.a
 
-${THIRDPARTY_DEPS}/cmph-built:
+$(THIRDPARTY_DEPS)/lib/libcxxmph.a:
 	@echo "Building and installing CMPH..." ; \
 	mkdir -pv ${THIRDPARTY_DEPS}/ && \
 	pushd ${THIRDPARTY_DIR}/cmph && \
@@ -387,6 +387,8 @@ $(THIRDPARTY_DEPS)/include/kseq.h: ${THIRDPARTY_DIR}/kseq/kseq.h
 	mkdir -pv ${THIRDPARTY_DEPS}/include ; \
 	cp $< $@
 
+cxx-prettyprint: $(THIRDPARTY_DEPS)/include/prettyprint.hpp
+
 $(THIRDPARTY_DEPS)/include/prettyprint.hpp: ${THIRDPARTY_DIR}/cxx-prettyprint/prettyprint.hpp
 	mkdir -pv ${THIRDPARTY_DEPS}/include ; \
 	cp $< $@
@@ -395,19 +397,66 @@ $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
 	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
 
 
-$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a $(THIRDPARTY_DEPS)/include/prettyprint.hpp
-	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE) $(LIBS)
+$(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS_EXTRA) -o $@  $^ $(INCLUDE) $(LIBS)
 
 
 $(LIB_DIR)/tightString.o: $(LIB_DIR)/tightString.cpp $(LIB_DIR)/tightString.hpp $(LIB_DIR)/globals.hpp
-	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
+	$(CXX) -c $(CXXFLAGS) $(CXXFLAGS_EXTRA) -o $@  $< $(INCLUDE)
 
 $(LIB_DIR)/junctions.o: $(LIB_DIR)/junctions.cpp $(LIB_DIR)/junctions.hpp $(LIB_DIR)/globals.hpp $(LIB_DIR)/tightString.o
-	$(CXX) -c $(CXXFLAGS) -o $@  $< $(INCLUDE)
+	$(CXX) -c $(CXXFLAGS) $(CXXFLAGS_EXTRA) -o $@  $< $(INCLUDE)
 
-run_test: $(BIN_DIR)/test build
+run_test: $(BIN_DIR)/test build gtests
 	time $(BIN_DIR)/test
 
 
 build: $(BIN_DIR)/tagli1
 
+# Points to the root of Google Test, relative to where this file is.
+# Remember to tweak this if you move this file.
+GTEST_DIR = thirdparty/gtest/
+GTEST_HEADERS = thirdparty/gtest/include/gtest/*.h \
+                thirdparty/gtest/include/gtest/internal/*.h
+
+# Flags passed to the preprocessor.
+# Do not use pthreads
+GTEST_CXXFLAGS = $(CXXFLAGS) -I$(GTEST_DIR)/include  -DGTEST_HAS_PTHREAD=0
+
+# All tests produced by this Makefile.  Remember to add new tests you
+# created to the list.
+TESTS = $(BIN_DIR)/tightString-test
+
+
+# House-keeping build targets.
+
+gtests : gtest $(TESTS)
+
+# Usually you shouldn't tweak such internal variables, indicated by a
+# trailing _.
+GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
+gtest : $(LIB_DIR)/gtest.a $(LIB_DIR)/gtest_main.a
+# For simplicity and to avoid depending on Google Test's
+# implementation details, the dependencies specified below are
+# conservative and not optimized.  This is fine as Google Test
+# compiles fast and for ordinary users its source rarely changes.
+$(LIB_DIR)/gtest-all.o : $(GTEST_SRCS_)
+	$(CXX) -I$(GTEST_DIR) $(GTEST_CXXFLAGS)  -c $(GTEST_DIR)/src/gtest-all.cc  -o $@
+
+$(LIB_DIR)/gtest_main.o : $(GTEST_SRCS_)
+	$(CXX) -I$(GTEST_DIR) $(GTEST_CXXFLAGS) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
+
+$(LIB_DIR)/gtest.a : $(LIB_DIR)/gtest-all.o
+	$(AR) $(ARFLAGS) $@ $^
+$(LIB_DIR)/gtest_main.a : $(LIB_DIR)/gtest-all.o $(LIB_DIR)/gtest_main.o
+	$(AR) $(ARFLAGS) $@ $^
+
+# Builds a sample test.  A test should link with either gtest.a or
+# gtest_main.a, depending on whether it defines its own main()
+# function.
+
+$(LIB_DIR)/tightString-test.o : $(TEST_DIR)/tightString-test.cpp $(LIB_DIR)/tightString.o $(GTEST_HEADERS)
+	$(CXX) $(GTEST_CXXFLAGS) -c $(TEST_DIR)/tightString-test.cpp -o $@
+
+$(BIN_DIR)/tightString-test : $(LIB_DIR)/tightString.o $(LIB_DIR)/tightString-test.o $(LIB_DIR)/gtest_main.a
+	$(CXX) $(GTEST_CXXFLAGS) $^ -o $@

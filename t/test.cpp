@@ -30,18 +30,11 @@ void test0b (unsigned int l) {
 
 }
 
-void test1 (std::string s) {
-    TightString t(s);
-    // Fingerprint f = t.fingerprint;
-//  cout << s << " " << hex << f  << " " << t.unimport()  << "\n";
-    assert (s == t.unimport());
-}
-
 void test2 (std::string s) {
     LongTightString t(s);
     cout << s << "*" ;
     cout << t.unimport() << "-"
-		 << s.length()  << "+" << t.unimport().length() << " ** ";
+         << s.length()  << "+" << t.unimport().length() << " ** ";
     cout << t.length();
     cout << "\n";
     cout << t.sequence().to_string() << "\n";
@@ -107,21 +100,6 @@ int main()
     for(unsigned int i=0; i<= KMER_LENGTH; i++) {
         test0b(i);
     }
-
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
-    test1("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
-    test1("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    test1("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    test1("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    test1("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-    test1("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-    test1("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 
     cout << "Test2\n";
     test2("A");
@@ -209,14 +187,14 @@ int main()
     test6("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 1);
 
     /*
-	  cout << "Starting speed-test..." << std::endl;
-	  const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
-	  for (size_t i= 0; i<1E7; ++i) {
-	  LongTightString t(s);
-	  if (t.unimport() != s) {
-	  cout << "Encoding/decoding error!" << std::endl;
-	  }
-	  }
+      cout << "Starting speed-test..." << std::endl;
+      const std::string s= "TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGTTTTTTTTTATTTTTTT";
+      for (size_t i= 0; i<1E7; ++i) {
+      LongTightString t(s);
+      if (t.unimport() != s) {
+      cout << "Encoding/decoding error!" << std::endl;
+      }
+      }
     */
     return 0;
 }
