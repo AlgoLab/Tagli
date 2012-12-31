@@ -43,6 +43,11 @@ protected:
         "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG",
         "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
     };
+    len_t overlapHelper (std::string s1, std::string s2) {
+        TightString t1(s1);
+        TightString t2(s2);
+        return overlap(t1,t2);
+    }
 
 };
 
@@ -59,6 +64,41 @@ protected:
         strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
         strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
         strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
+        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+        strings.push_back("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+    }
+
+    len_t overlapHelper (std::string s1, std::string s2) {
+        LongTightString t1(s1);
+        LongTightString t2(s2);
+        return overlap(t1,t2);
     }
 };
 
@@ -70,6 +110,16 @@ TEST_F(TightStringTest, unimport) {
         EXPECT_EQ(x, t.unimport());
     }
 }
+
+TEST_F(LongTightStringTest, unimport) {
+    for (auto x : strings) {
+        LongTightString t(x);
+        EXPECT_EQ(x.length(), t.unimport().length());
+        EXPECT_EQ(x, t.unimport());
+    }
+}
+
+
 
 const vector<string> build_suffixes(string s) {
     vector<string> result = { "" };
@@ -108,4 +158,41 @@ TEST_F(LongTightStringTest, build_suffixes) {
         EXPECT_EQ(suff_ok.size(), suff_test.size());
         EXPECT_TRUE(equal(suff_ok.begin(), suff_ok.end(), suff_test.begin()));
     }
+}
+
+
+
+TEST_F(LongTightStringTest, overlap) {
+    EXPECT_EQ(1, overlapHelper("T", "T"));
+    EXPECT_EQ(1, overlapHelper("A", "A"));
+    EXPECT_EQ(1, overlapHelper("C", "C"));
+    EXPECT_EQ(1, overlapHelper("G", "G"));
+    EXPECT_EQ(0, overlapHelper("G", "C"));
+    EXPECT_EQ(0, overlapHelper("C", "G"));
+    EXPECT_EQ(2, overlapHelper("AT", "AT"));
+    EXPECT_EQ(2, overlapHelper("AA", "AA"));
+    EXPECT_EQ(0, overlapHelper("AG", "AC"));
+    EXPECT_EQ(0, overlapHelper("AC", "AG"));
+    EXPECT_EQ(0, overlapHelper("CT", "AT"));
+    EXPECT_EQ(1, overlapHelper("CA", "AA"));
+    EXPECT_EQ(0, overlapHelper("CG", "AC"));
+    EXPECT_EQ(0, overlapHelper("CC", "AG"));
+    EXPECT_EQ(1, overlapHelper("CT", "TC"));
+    EXPECT_EQ(1, overlapHelper("CA", "AC"));
+    EXPECT_EQ(0, overlapHelper("CG", "CC"));
+    EXPECT_EQ(1, overlapHelper("CC", "CG"));
+    EXPECT_EQ(2, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(32, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(36, overlapHelper("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
+
+}
+
+TEST_F(TightStringTest, overlap) {
+    EXPECT_EQ(2, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(32, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
 }
