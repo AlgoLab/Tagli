@@ -144,6 +144,18 @@ TEST_F(LongTightStringTest, shift) {
         EXPECT_EQ(ok, tested);
     }
 }
+TEST_F(LongTightStringTest, pop) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        string orig_x = x;
+        LongTightString lts(x);
+        NucleotideBits z = lts.pop();
+        string tested = lts.unimport();
+        string ok = x.substr(0, x.length() - 1);
+        EXPECT_EQ(ok.length(), tested.length());
+        EXPECT_EQ(ok, tested) << orig_x;
+    }
+}
 
 TEST_F(LongTightStringTest, build_suffixes) {
     kmers.insert(kmers.end(), strings.begin(), strings.end());

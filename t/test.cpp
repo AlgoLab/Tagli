@@ -50,16 +50,6 @@ void test5 (std::string s1) {
     assert(s1.compare(reverse_complement(s2)) == 0);
 }
 
-
-void test6 (std::string s1, std::string s2, len_t len) {
-    LongTightString lts1(s1);
-    LongTightString lts2(s2);
-    len_t ov=overlap(lts1, lts2);
-    cout << s1 << "/" << s2 << "=" << ov << "\n";
-    assert(len == ov);
-}
-
-
 int main()
 {
     assert (sizeof(Fingerprint)*8 == TAGLI_WORD_SIZE);
@@ -115,12 +105,6 @@ int main()
     test5("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     test5("CCCAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
     test5("CCCTAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-
-    cout << "TEST 6\n";
-    test6("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 2);
-    test6("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 32);
-    test6("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 0);
-    test6("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", 1);
 
     /*
       cout << "Starting speed-test..." << std::endl;

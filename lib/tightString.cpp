@@ -182,13 +182,6 @@ len_t overlap(const LongTightString & str1, const LongTightString & str2) {
 //  const LongTightString TightString
 // }
 
-NucleotideBits LongTightString::pop() {
-    NucleotideBits t= _sequence[2*_length-2] + (_sequence[2*_length-1]*2);
-    _sequence <<= 2;
-    --_length;
-    return t;
-}
-
 Fingerprint reverse_complement(const Fingerprint s) {
     Fingerprint v = ~s;
 //  assert(sizeof(v) == 64);
@@ -357,6 +350,12 @@ bool LongTightString::is_suffix(const LongTightString & s) {
     return false;
 }
 
+NucleotideBits LongTightString::pop() {
+    NucleotideBits t= _sequence[0] + (_sequence[1]*2);
+    _sequence >>= 2;
+    --_length;
+    return t;
+}
 NucleotideBits LongTightString::shift() {
     NucleotideBits x = _sequence[2*(_length-1)] + _sequence[2*(_length-1)+1]*2;
     _sequence[2*(_length-1)] = 0;
