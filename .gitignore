@@ -12,3 +12,6 @@
 *.a
 bin/
 .make
+
+# Cache
+thirdparty/cmph/autom4te.cache/
