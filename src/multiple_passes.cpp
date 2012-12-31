@@ -135,7 +135,14 @@ int main(void)
 */
     ROOT_INFO("End pass #1");
     cxxmph::SimpleMPHIndex<Fingerprint> junction_index;
-    if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) { exit(-1); }
+    while (good_fingerprints.size() < 10) {
+        ROOT_TRACE("Adding " << 10 - good_fingerprints.size() << " random junctions");
+        good_fingerprints.insert(rand() % BLOOM_FILTER_SIZE);
+    }
+    if (!junction_index.Reset(good_fingerprints.begin(), good_fingerprints.end(), good_fingerprints.size())) {
+        ROOT_TRACE("Cannot create junction_index");
+        exit(-1);
+    }
     Junction *junctions = new Junction[junction_index.size()];
 /*
   Pass #2
@@ -165,13 +172,11 @@ int main(void)
                     // We map the fingerprint to a putative junction
                     ROOT_DEBUG(f << ":" << j);
                     uint64_t index = junction_index.index(f);
-                    ROOT_DEBUG("index = " << index);
-                    ROOT_DEBUG("j=" << j);
-                    ROOT_DEBUG("Single side: " << junctions[index].dump());
-                    ROOT_DEBUG("Read 0");
-                    ROOT_DEBUG(lts_straigth.dump());
-                    ROOT_DEBUG("Read 1");
-                    ROOT_DEBUG(lts_revcom.dump());
+                    ROOT_DEBUG("Index = " << index << ", Strand:" << j << ", Junction: " << junctions[index].dump());
+                    ROOT_TRACE("Read 0");
+                    ROOT_TRACE(lts_straigth.dump());
+                    ROOT_TRACE("Read 1");
+                    ROOT_TRACE(lts_revcom.dump());
                     (j==0) ? junctions[index].add_read(lts_straigth) : junctions[index].add_read(lts_revcom);
                 }
             }

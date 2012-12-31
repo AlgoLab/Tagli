@@ -67,11 +67,13 @@ public:
         else
             result << "right,";
         result << "Single: " << single_side.unimport() << ",";
-        result << "Length (check): " << multiple_side.size();
+        result << " Length: " << single_side.length();
+        result << " Multiple side components: " << multiple_side.size();
         if (multiple_side.size()==multiple_side_length)
             result << " status: ok";
         else
-            result << " status: should be " << multiple_side_length << ")";
+            result << " status: should be " << multiple_side_length;
+        result << std::endl;
         for (unsigned int i=0; i<multiple_side.size(); ++i) {
             result << i << ":" << multiple_side[i].unimport() << std::endl;
         }

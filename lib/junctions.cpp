@@ -41,7 +41,10 @@ void Junction::clean_multiple(const LongTightString & s) {
 }
 
 void Junction::add_read(LongTightString read) {
-    if (single_side.length() == 0) {
+    ROOT_TRACE("add_read: " << read.dump());
+    ROOT_TRACE(this->dump());
+    if (multiple_side_length == 0 && single_side.length() == 0) { //multiple_side_length == 0 added to speed up the most
+                                                                  //common case
         // first time we visit the junction
         single_side = read;
         return;
@@ -55,14 +58,23 @@ void Junction::add_read(LongTightString read) {
     // Match read_substring_prefix = find_longest_prefix_substring(single_side, read);
     // Match read_substring_suffix = find_longest_suffix_substring(single_side, read);
     Match read_substring = find_largest_common_substring(single_side, read);
+    ROOT_TRACE("read_prefix_substring: " << read_prefix_substring.dump() << ", read_substring: " << read_substring.dump());
 
     // First check if read is contained in the single side
-    if (read_prefix_substring.length == read.length()) return;
+    if (read_prefix_substring.length == read.length()) {
+        ROOT_TRACE("Discarded: read is contained in the single side");
+        return;
+    }
     // Then check if read and single_side share the fingerprint, otherwise discard the read
     //                       Sometimes we can even discard the old single_side.
-    if (read_substring.length < KMER_LENGTH) return;
+    if (read_substring.length < KMER_LENGTH) {
+        ROOT_TRACE("Discarded: overlap too short");
+        return;
+    }
 
     if (multiple_side_length > 1) {
+        ROOT_TRACE("multiple_side_length > 1, actually " << multiple_side_length);
+
         // Since we have determined the *multiple* side,
         // the single_side is fixed and cannot be changed, but only extended
         // in the direction opposite to the junction
@@ -130,16 +142,19 @@ void Junction::add_read(LongTightString read) {
        2. we determine the type of the junction (left or right) and a tentative split of the single
        side
     */
+    ROOT_TRACE("multiple_side_length: 0");
     if (read_left > THRESHOLD_MERGE_SUBSTRINGS || read_right > THRESHOLD_MERGE_SUBSTRINGS) {
         // yes, we extend the single side
         LongTightStringSequence single_side_seq = single_side.sequence();
         LongTightStringSequence read_seq = read.sequence();
         if (read_left > read_right) {
+            ROOT_TRACE("Extend single_side to the left");
             len_t new_length = single_side.length() + read.length() - read_left;
             if (new_length <= LONGTIGHTSTRING_LEN) {
                 single_side.update(merge(read_seq, single_side_seq, read_left), new_length);
             }
         } else {
+            ROOT_TRACE("Extend single_side to the right");
             len_t new_length=single_side.length() + read.length() - read_right;
             if (new_length <= LONGTIGHTSTRING_LEN) {
                 single_side.update(merge(single_side_seq, read_seq, read_right), new_length);
@@ -152,6 +167,7 @@ void Junction::add_read(LongTightString read) {
       if it is a left or right junction.
     */
     // TODO
+    ROOT_TRACE("Create multiple_side");
     if (read_substring.begin1 == 0 || read_substring.begin2 == 0)
         is_left = true;
     else
@@ -159,6 +175,7 @@ void Junction::add_read(LongTightString read) {
             read_substring.begin2 + read_substring.length < single_side.length() - 1)
             // in this case the longest match between the read and the single side cannot be extended to be a junction
             return;
+    ROOT_TRACE("Determine junction type: " << is_left);
     if (is_left) {
         add_multiple(read.suffix(read.length()-(read_substring.begin1+read_substring.length)));
         add_multiple(single_side.pop(single_side.length()-(read_substring.begin2+read_substring.length)));
