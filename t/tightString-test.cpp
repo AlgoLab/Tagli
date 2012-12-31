@@ -72,9 +72,9 @@ TEST_F(TightStringTest, unimport) {
 }
 
 const vector<string> build_suffixes(string s) {
-    vector<string> result;
-    for(size_t len = s.length(); len > 0; --len) {
-        result.push_back(s.substr(0, len));
+    vector<string> result = { "" };
+    for(size_t len = 1; len <= s.length(); ++len) {
+        result.push_back(s.substr(s.length() - len, len));
     }
     return result;
 }
@@ -94,19 +94,18 @@ TEST_F(LongTightStringTest, shift) {
         EXPECT_EQ(ok, tested);
     }
 }
-/*
-  TEST_F(LongTightStringTest, build_suffixes) {
-  kmers.insert(kmers.end(), strings.begin(), strings.end());
-  for (auto x : kmers) {
-  LongTightString lts(x);
-  vector<LongTightString> ltsvec = build_suffixes(lts);
-  vector<string> suff_test;
-  suff_test.resize(ltsvec.size());
-  transform(ltsvec.begin(), ltsvec.end(), suff_test.begin(),
-  [](LongTightString p) { return(p.unimport()); });
-  vector<string> suff_ok = build_suffixes(x);
-  EXPECT_EQ(suff_ok.size(), suff_test.size());
-  EXPECT_TRUE(equal(suff_ok.begin(), suff_ok.end(), suff_test.begin()));
-  }
-  }
-*/
+
+TEST_F(LongTightStringTest, build_suffixes) {
+    kmers.insert(kmers.end(), strings.begin(), strings.end());
+    for (auto x : kmers) {
+        LongTightString lts(x);
+        vector<LongTightString> ltsvec = build_suffixes(lts);
+        vector<string> suff_test;
+        suff_test.resize(ltsvec.size());
+        transform(ltsvec.begin(), ltsvec.end(), suff_test.begin(),
+                  [](LongTightString p) { return(p.unimport()); });
+        vector<string> suff_ok = build_suffixes(x);
+        EXPECT_EQ(suff_ok.size(), suff_test.size());
+        EXPECT_TRUE(equal(suff_ok.begin(), suff_ok.end(), suff_test.begin()));
+    }
+}

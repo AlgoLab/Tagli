@@ -313,6 +313,7 @@ const std::vector<LongTightString> build_suffixes(LongTightString x) {
         sa.push_back(x);
         x.shift();
     }
+    sa.push_back(x);
     std::reverse(sa.begin(), sa.end());
     return sa;
 }
