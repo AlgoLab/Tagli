@@ -264,9 +264,9 @@ LongTightStringSequence merge(const LongTightString & s1, const LongTightString 
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2) {
     vector<LongTightString> s1_suffix = build_suffixes(s1);
     vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t max_len=min(s1.length(), s2.length());
-    for(len_t l1=max_len; l1>0; l1--)
-        for(len_t l2=l1; l2<=max_len; l2++)
+    len_t max_len = min(s1.length(), s2.length());
+    for(len_t l1 = max_len; l1 > 0; l1--)
+        for(len_t l2 = l1; l2 <= max_len; l2++)
             if (s1_suffix[l1] == s2_suffix[l2].prefix(l1))
                 return Match(s1.length()-l1-1, s2.length()-l2-1, l1);
     return Match(0, 0, 0);
@@ -301,8 +301,8 @@ Match find_largest_common_substring(const LongTightString & s1, const LongTightS
 const std::vector<LongTightString> build_suffixes(LongTightString x) {
     std::vector<LongTightString> sa;
     sa.reserve(x.length()+1);
-    len_t max=x.length();
-    for(len_t len=0; len < max; len++) {
+    len_t max = x.length();
+    for(len_t len = 0; len < max; len++) {
         sa.push_back(x);
         x.shift();
     }
@@ -313,8 +313,8 @@ const std::vector<LongTightString> build_suffixes(LongTightString x) {
 const std::vector<LongTightString> build_prefixes(LongTightString x) {
     std::vector<LongTightString> sa;
     sa.reserve(x.length()+1);
-    len_t max=x.length();
-    for(len_t len=0; len <= max; len++) {
+    len_t max = x.length();
+    for(len_t len = 0; len <= max; len++) {
         sa.push_back(x);
         x.pop();
     }
@@ -324,9 +324,8 @@ const std::vector<LongTightString> build_prefixes(LongTightString x) {
 
 LongTightString LongTightString::prefix(const len_t length) {
     len_t actual_len = std::min(length, _length);
-    len_t movement=_length-actual_len;
-    LongTightString &result = *this;
-    result.update(_sequence>>movement, actual_len);
+    len_t movement = _length-actual_len;
+    LongTightString result(_sequence>>(2*movement), actual_len);
     return result;
 }
 LongTightString LongTightString::suffix(const len_t length) {

@@ -208,3 +208,11 @@ TEST_F(TightStringTest, overlap) {
     EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
     EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
 }
+
+TEST_F(LongTightStringTest, prefix) {
+    for (auto x : strings) {
+        LongTightString t(x);
+        for (len_t l = 0; l <= x.length(); ++l)
+            EXPECT_EQ(x.substr(0, l), t.prefix(l).unimport());
+    }
+}

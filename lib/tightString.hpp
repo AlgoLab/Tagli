@@ -120,6 +120,10 @@ public:
         :_length(lts._length), _sequence(lts._sequence)
         {}
 
+    LongTightString(const LongTightStringSequence& s, const len_t l)
+        :_length(l), _sequence(s)
+        {}
+
     len_t length() {
         return _length;
     }
