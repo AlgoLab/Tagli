@@ -209,33 +209,6 @@ TEST_F(LongTightStringTest, build_suffixes) {
 
 
 
-TEST_F(LongTightStringTest, overlap) {
-    EXPECT_EQ(1, overlapHelper("T", "T"));
-    EXPECT_EQ(1, overlapHelper("A", "A"));
-    EXPECT_EQ(1, overlapHelper("C", "C"));
-    EXPECT_EQ(1, overlapHelper("G", "G"));
-    EXPECT_EQ(0, overlapHelper("G", "C"));
-    EXPECT_EQ(0, overlapHelper("C", "G"));
-    EXPECT_EQ(2, overlapHelper("AT", "AT"));
-    EXPECT_EQ(2, overlapHelper("AA", "AA"));
-    EXPECT_EQ(0, overlapHelper("AG", "AC"));
-    EXPECT_EQ(0, overlapHelper("AC", "AG"));
-    EXPECT_EQ(0, overlapHelper("CT", "AT"));
-    EXPECT_EQ(1, overlapHelper("CA", "AA"));
-    EXPECT_EQ(0, overlapHelper("CG", "AC"));
-    EXPECT_EQ(0, overlapHelper("CC", "AG"));
-    EXPECT_EQ(1, overlapHelper("CT", "TC"));
-    EXPECT_EQ(1, overlapHelper("CA", "AC"));
-    EXPECT_EQ(0, overlapHelper("CG", "CC"));
-    EXPECT_EQ(1, overlapHelper("CC", "CG"));
-    EXPECT_EQ(2, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
-    EXPECT_EQ(32, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
-    EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
-    EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
-    EXPECT_EQ(36, overlapHelper("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-                                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
-
-}
 
 TEST_F(TightStringTest, overlap) {
     EXPECT_EQ(2, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
@@ -272,4 +245,46 @@ TEST_F(LongTightStringTest, find_longest_prefix_suffix_substring) {
         //         << find_longest_common_substring_checker(p.first, p.second).dump()  << " "
         //         << find_longest_common_substring(s1, s2).dump();
     }
+}
+
+
+
+const len_t overlap(string s1, string s2) {
+    for (len_t len = min(s1.length(), s2.length()); len>0; len--)
+        if (s1.compare(s1.length()-len, len, s2, 0, len) == 0)
+            return len;
+    return 0;
+}
+
+
+TEST_F(LongTightStringTest, overlap) {
+    for (auto p : string_pairs) {
+        LongTightString s1(p.first);
+        LongTightString s2(p.second);
+        EXPECT_EQ(overlap(p.first, p.second), overlap(s1, s2)) << p.first << "/" << p.second << endl;
+    }
+    EXPECT_EQ(1, overlapHelper("T", "T"));
+    EXPECT_EQ(1, overlapHelper("A", "A"));
+    EXPECT_EQ(1, overlapHelper("C", "C"));
+    EXPECT_EQ(1, overlapHelper("G", "G"));
+    EXPECT_EQ(0, overlapHelper("G", "C"));
+    EXPECT_EQ(0, overlapHelper("C", "G"));
+    EXPECT_EQ(2, overlapHelper("AT", "AT"));
+    EXPECT_EQ(2, overlapHelper("AA", "AA"));
+    EXPECT_EQ(0, overlapHelper("AG", "AC"));
+    EXPECT_EQ(0, overlapHelper("AC", "AG"));
+    EXPECT_EQ(0, overlapHelper("CT", "AT"));
+    EXPECT_EQ(1, overlapHelper("CA", "AA"));
+    EXPECT_EQ(0, overlapHelper("CG", "AC"));
+    EXPECT_EQ(0, overlapHelper("CC", "AG"));
+    EXPECT_EQ(1, overlapHelper("CT", "TC"));
+    EXPECT_EQ(1, overlapHelper("CA", "AC"));
+    EXPECT_EQ(0, overlapHelper("CG", "CC"));
+    EXPECT_EQ(1, overlapHelper("CC", "CG"));
+    EXPECT_EQ(2, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGC", "GCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(32, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
+    EXPECT_EQ(36, overlapHelper("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                                "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
 }
