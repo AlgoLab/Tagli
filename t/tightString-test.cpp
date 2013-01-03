@@ -22,6 +22,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "prettyprint.hpp"
 
 using namespace std;
 
@@ -54,51 +55,85 @@ protected:
 class LongTightStringTest : public TightStringTest {
 protected:
     vector<string> strings = {""};
+    vector<string> short_strings = {""};
+    vector<string> long_strings = {""};
+    vector< pair<string,string> > string_pairs;
     virtual void SetUp() {
         for (len_t len = 1; len <= 4; len++)
             for (Fingerprint f = 0; f < pow(4, len); f++)
-                strings.push_back(decode(f, len));
+                short_strings.push_back(decode(f, len));
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
+        // long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // long_strings.push_back("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // long_strings.push_back("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+        // long_strings.push_back("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        // long_strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+
         strings.insert(strings.end(), kmers.begin(), kmers.end());
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
-        strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-        strings.push_back("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        strings.insert(strings.end(), short_strings.begin(), short_strings.end());
+        strings.insert(strings.end(), long_strings.begin(), long_strings.end());
+
+        string_pairs.push_back(make_pair("AAAAAAAAAAAA", "CAAAAAAAAAAA"));
+        string_pairs.push_back(make_pair("AAAAAAAAAAAA", "AAAAAAAAAAAA"));
+        // for (auto s1 : short_strings)
+        //     for (auto s2 : short_strings)
+        //         string_pairs.push_back(make_pair(s1, s2));
+        for (auto s1 : long_strings)
+            for (auto s2 : long_strings)
+                string_pairs.push_back(make_pair(s1, s2));
+
     }
 
     len_t overlapHelper (std::string s1, std::string s2) {
         LongTightString t1(s1);
         LongTightString t2(s2);
         return overlap(t1,t2);
+    }
+
+    Match find_longest_common_substring_checker(std::string s1, std::string s2, bool start_anchored=false, bool end_anchored=false) {
+        if (s1.size() == 0 || s2.size() == 0) return Match(0, 0, 0);
+        len_t max_start = start_anchored ? 0 : s1.length()-1;
+        len_t min_end = end_anchored ? s1.length()-1 : 0;
+
+        for (len_t p1 = 0; p1 <= max_start; p1++) {
+            for (int p2 = s1.length()-1; p2 >= max(p1, min_end); p2--) {
+                len_t len = p2-p1+1;
+                string needle = s1.substr(p1, len);
+                size_t found = s2.find(needle);
+
+                if (found!=string::npos)
+                    return Match(p1, (len_t) found, len);
+            }
+        }
+        return Match(0, 0, 0);
     }
 };
 
@@ -214,5 +249,27 @@ TEST_F(LongTightStringTest, prefix) {
         LongTightString t(x);
         for (len_t l = 0; l <= x.length(); ++l)
             EXPECT_EQ(x.substr(0, l), t.prefix(l).unimport());
+    }
+}
+
+TEST_F(LongTightStringTest, find_longest_prefix_suffix_substring) {
+    for (auto p : string_pairs) {
+        LongTightString s1(p.first);
+        LongTightString s2(p.second);
+        EXPECT_TRUE(compare(s1.unimport(), s2.unimport(), find_longest_common_substring_checker(p.first, p.second, true, false),
+                            find_longest_prefix_substring(s1, s2)))
+            << p.first << " " << p.second << " "
+            << find_longest_common_substring_checker(p.first, p.second, true, false).dump()  << " "
+            << find_longest_prefix_substring(s1, s2).dump();
+        EXPECT_TRUE(compare(s1.unimport(), s2.unimport(), find_longest_common_substring_checker(p.first, p.second, false, true),
+                            find_longest_suffix_substring(s1, s2)))
+            << p.first << " " << p.second << " "
+            << find_longest_common_substring_checker(p.first, p.second, false, true).dump()  << " "
+            << find_longest_suffix_substring(s1, s2).dump();
+        //     EXPECT_TRUE(s1.unimport(), s2.unimport(), compare(find_longest_common_substring_checker(p.first, p.second),
+        //                         find_longest_common_substring(s1, s2)))
+        //         << p.first << " " << p.second << " "
+        //         << find_longest_common_substring_checker(p.first, p.second).dump()  << " "
+        //         << find_longest_common_substring(s1, s2).dump();
     }
 }

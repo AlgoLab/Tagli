@@ -264,11 +264,12 @@ LongTightStringSequence merge(const LongTightString & s1, const LongTightString 
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2) {
     vector<LongTightString> s1_suffix = build_suffixes(s1);
     vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t max_len = min(s1.length(), s2.length());
-    for(len_t l1 = max_len; l1 > 0; l1--)
-        for(len_t l2 = l1; l2 <= max_len; l2++)
-            if (s1_suffix[l1] == s2_suffix[l2].prefix(l1))
-                return Match(s1.length()-l1-1, s2.length()-l2-1, l1);
+    len_t s2_len = s2.length();
+    len_t max_len = min(s1.length(), s2_len);
+    for(len_t len = max_len; len > 0; len--)
+        for(len_t pos = len; pos <= s2_len; pos++)
+            if (s1_suffix[len].compare(s2_suffix[pos].prefix(len)))
+                return Match(s1.length()-len, s2_len-pos, len);
     return Match(0, 0, 0);
 }
 
@@ -278,11 +279,12 @@ Match find_longest_suffix_substring(const LongTightString & s1, const LongTightS
 Match find_longest_prefix_substring(const LongTightString & s1, const LongTightString & s2) {
     vector<LongTightString> s1_prefix = build_prefixes(s1);
     vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t max_len=min(s1.length(), s2.length());
-    for(len_t l1=max_len; l1>0; l1--)
-        for(len_t l2=l1; l2<=max_len; l2++)
-            if (s1_prefix[l1] == s2_suffix[l2].prefix(l1))
-                return Match(s1.length()-l1-1, s2.length()-l2-1, l1);
+    len_t s2_len = s2.length();
+    len_t max_len = min(s1.length(), s2_len);
+    for(len_t len = max_len; len > 0; len--)
+        for(len_t pos = len; pos <= s2_len; pos++)
+            if (s1_prefix[len].compare(s2_suffix[pos].prefix(len)))
+                return Match(0, s2_len-pos, len);
     return Match(0, 0, 0);
 }
 
@@ -413,4 +415,17 @@ void LongTightString::unshift(const LongTightString & s) {
     new_sequence <<= (2 * new_length);
     _sequence |= new_sequence;
     _length += new_length;
+}
+
+bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2) {
+    if ((m1.length == m2.length) &&
+        (m1.begin1 == m2.begin1) &&
+        (m1.begin2 == m2.begin2))
+        return true;
+    if (m1.length == m2.length &&
+        s1.compare(m1.begin1, m1.length, s1, m2.begin1, m2.length) == 0 &&
+        s2.compare(m1.begin2, m1.length, s2, m2.begin2, m2.length) == 0
+        )
+        return true;
+    return false;
 }

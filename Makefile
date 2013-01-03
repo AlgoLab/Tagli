@@ -421,7 +421,7 @@ GTEST_HEADERS = thirdparty/gtest/include/gtest/*.h \
 
 # Flags passed to the preprocessor.
 # Do not use pthreads
-GTEST_CXXFLAGS = $(CXXFLAGS) -I$(GTEST_DIR)/include  -DGTEST_HAS_PTHREAD=0
+GTEST_CXXFLAGS = $(CXXFLAGS) -I$(GTEST_DIR)/include -I$(INCLUDE)  -DGTEST_HAS_PTHREAD=0
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
