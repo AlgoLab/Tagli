@@ -15,3 +15,4 @@ bin/
 
 # Cache
 thirdparty/cmph/autom4te.cache/
+thirdparty/cmph/m4/
