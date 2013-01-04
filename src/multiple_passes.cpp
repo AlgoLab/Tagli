@@ -73,6 +73,7 @@ int main(void)
     kseq_t *seq;
     std::string inputfile("reads.fastq.gz");
     Fingerprint seeds[2*_KF_];
+    uint64_t read_counter = 0;
     /* seeds[] is an array of 2*_KF_ fingerprints extracted from a sequence s.
        Even-indexed elements refer to substrings of s, while odd-indexed elements refer to substrings of the
        reverse-and-complement of s
@@ -105,7 +106,8 @@ int main(void)
     bloom_table.resize(BLOOM_FILTER_SIZE, false);
 
     while (kseq_read(seq) >= 0) {
-        ROOT_TRACE("Read: " << seq->seq.s);
+        read_counter++;
+        ROOT_TRACE("Read " << read_counter << ": " << seq->seq.s);
         extract_seeds(seq->seq.s, seeds);
         BOOST_FOREACH(Fingerprint f, seeds) {
             unsigned int pos=0;
@@ -156,7 +158,10 @@ int main(void)
 
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
+    read_counter = 0;
     while (kseq_read(seq) >= 0) {
+        read_counter++;
+        ROOT_TRACE("Read " << read_counter << ": " << seq->seq.s);
         extract_seeds(seq->seq.s, seeds);
         string s = seq->seq.s;
         string rs = reverse_complement(seq->seq.s);
@@ -218,7 +223,10 @@ int main(void)
     ROOT_DEBUG("Begin pass #4");
     fp = gzopen(inputfile.c_str(), "r");
     seq = kseq_init(fp);
+    read_counter = 0;
     while (kseq_read(seq) >= 0) {
+        read_counter++;
+        ROOT_TRACE("Read " << read_counter << ": " << seq->seq.s);
         std::vector<Fingerprint> fingerprints = extract_fingerprints(seq->seq.s);
         string s = seq->seq.s;
         string rs = reverse_complement(seq->seq.s);
