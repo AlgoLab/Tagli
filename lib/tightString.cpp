@@ -293,10 +293,10 @@ Match find_largest_common_substring(const LongTightString & s1, const LongTightS
     vector<LongTightString> s2_suffix = build_suffixes(s2);
     len_t max_len=min(s1.length(), s2.length());
     for(len_t len=max_len; len>0; len--)
-        for(len_t l1=len; l1<s1.length()-len; l1++)
-            for(len_t l2=len; l2<s2.length()-len; l2++)
-                if ((s1_suffix[l1].prefix(len)) == (s2_suffix[l2].prefix(len)))
-                    return Match(s1.length()-l1-1, s2.length()-l2-1, l1);
+        for(len_t l1=len; l1<=s1.length(); l1++)
+            for(len_t l2=len; l2<=s2.length(); l2++)
+                if ((s1_suffix[l1].prefix(len)).compare(s2_suffix[l2].prefix(len)))
+                    return Match(s1.length()-l1, s2.length()-l2, len);
     return Match(0, 0, 0);
 }
 

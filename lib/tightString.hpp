@@ -214,7 +214,7 @@ public:
     }
 
 };
-bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2);
+bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2, bool debug);
 
 
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2);

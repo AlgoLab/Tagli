@@ -127,18 +127,21 @@ protected:
         if (s1.size() == 0 || s2.size() == 0) return Match(0, 0, 0);
         len_t max_start = start_anchored ? 0 : s1.length()-1;
         len_t min_end = end_anchored ? s1.length()-1 : 0;
+        Match result(0, 0, 0);
 
         for (len_t p1 = 0; p1 <= max_start; p1++) {
-            for (int p2 = s1.length()-1; p2 >= max(p1, min_end); p2--) {
+            for (int p2 = s1.length()-1; p2 >= p1 && p2 >= min_end; p2--) {
                 len_t len = p2-p1+1;
                 string needle = s1.substr(p1, len);
                 size_t found = s2.find(needle);
 
-                if (found!=string::npos)
-                    return Match(p1, (len_t) found, len);
+                if (found!=string::npos && len > result.length) {
+                    Match nr(p1, (len_t) found, len);
+                    result = nr;
+                }
             }
         }
-        return Match(0, 0, 0);
+        return result;
     }
 };
 
