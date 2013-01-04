@@ -178,11 +178,13 @@ void Junction::add_read(LongTightString read) {
     ROOT_TRACE("read_substring: " << read_substring.dump());
     if (read_substring.begin1 == 0 || read_substring.begin2 == 0)
         is_left = true;
-    else
+    else {
         if (read_substring.begin1 + read_substring.length < read.length() - 1 &&
             read_substring.begin2 + read_substring.length < single_side.length() - 1)
             // in this case the longest match between the read and the single side cannot be extended to be a junction
             return;
+        is_left = false;
+    }
     ROOT_TRACE("Determine junction type: " << is_left);
     if (is_left) {
         add_multiple(read.suffix(read.length()-(read_substring.begin1+read_substring.length)));
