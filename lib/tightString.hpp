@@ -209,7 +209,7 @@ public:
 
     std::string dump() {
         std::stringstream result;
-        result << "begin1: " << begin1 << ", begin2: " << begin1 << ", length: " << length ;
+        result << "begin1: " << begin1 << ", begin2: " << begin2 << ", length: " << length ;
         return result.str();
     }
 

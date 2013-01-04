@@ -49,16 +49,23 @@ void Junction::add_read(LongTightString read) {
         single_side = read;
         return;
     }
+    ROOT_TRACE("add_read: " << read.dump());
+    ROOT_TRACE(this->dump());
     len_t read_left = overlap(read, single_side);
     len_t read_right = overlap(single_side, read);
+    ROOT_TRACE("add_read: " << read.dump());
+    ROOT_TRACE(this->dump());
     // ROOT_TRACE("Single side: " << single_side);
     // ROOT_TRACE("Read       : " << read);
     Match read_prefix_substring = find_longest_prefix_substring(read, single_side);
+    ROOT_TRACE("add_read: " << read.dump());
+    ROOT_TRACE(this->dump());
     // Match read_suffix_substring = find_longest_suffix_substring(read, single_side);
     // Match read_substring_prefix = find_longest_prefix_substring(single_side, read);
     // Match read_substring_suffix = find_longest_suffix_substring(single_side, read);
-    Match read_substring = find_largest_common_substring(single_side, read);
+    Match read_substring = find_largest_common_substring(read, single_side);
     ROOT_TRACE("read_prefix_substring: " << read_prefix_substring.dump() << ", read_substring: " << read_substring.dump());
+    ROOT_TRACE("read_left: " << read_left << ", read_right: " << read_right << endl);
 
     // First check if read is contained in the single side
     if (read_prefix_substring.length == read.length()) {
@@ -168,6 +175,7 @@ void Junction::add_read(LongTightString read) {
     */
     // TODO
     ROOT_TRACE("Create multiple_side");
+    ROOT_TRACE("read_substring: " << read_substring.dump());
     if (read_substring.begin1 == 0 || read_substring.begin2 == 0)
         is_left = true;
     else
@@ -179,15 +187,17 @@ void Junction::add_read(LongTightString read) {
     if (is_left) {
         add_multiple(read.suffix(read.length()-(read_substring.begin1+read_substring.length)));
         add_multiple(single_side.pop(single_side.length()-(read_substring.begin2+read_substring.length)));
-        if (read_substring.begin1 > 0)
-            // extend single_side
+        if (read_substring.begin1 > 0) {
+            ROOT_TRACE("extend single_side");
             single_side.unshift(read.prefix(read_substring.begin1));
+        }
     } else {
         add_multiple(read.prefix(read_substring.begin1));
         add_multiple(single_side.shift(read_substring.begin2));
-        if (read_substring.begin1 + read_substring.length < read.length() - 1)
-            // extend single_side
+        if (read_substring.begin1 + read_substring.length < read.length() - 1)  {
+            ROOT_TRACE("extend single_side");
             single_side.push(read.suffix(read.length() - (read_substring.begin1 + read_substring.length)));
+        }
     }
 }
 

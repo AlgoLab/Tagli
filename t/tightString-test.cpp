@@ -78,24 +78,24 @@ protected:
         long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
         long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
         long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
-        // long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        // long_strings.push_back("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        // long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        // long_strings.push_back("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
-        // long_strings.push_back("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
-        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        // long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-        // long_strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACC");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACG");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACT");
+        long_strings.push_back("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("GAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC");
+        long_strings.push_back("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG");
+        long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        long_strings.push_back("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        long_strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
 
         strings.insert(strings.end(), kmers.begin(), kmers.end());
         strings.insert(strings.end(), short_strings.begin(), short_strings.end());
@@ -103,9 +103,14 @@ protected:
 
         string_pairs.push_back(make_pair("AAAAAAAAAAAA", "CAAAAAAAAAAA"));
         string_pairs.push_back(make_pair("AAAAAAAAAAAA", "AAAAAAAAAAAA"));
-        // for (auto s1 : short_strings)
-        //     for (auto s2 : short_strings)
-        //         string_pairs.push_back(make_pair(s1, s2));
+        string_pairs.push_back(make_pair("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                                         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
+        string_pairs.push_back(make_pair("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+                                         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"));
+
+        for (auto s1 : short_strings)
+            for (auto s2 : short_strings)
+                string_pairs.push_back(make_pair(s1, s2));
         for (auto s1 : long_strings)
             for (auto s2 : long_strings)
                 string_pairs.push_back(make_pair(s1, s2));
@@ -230,20 +235,20 @@ TEST_F(LongTightStringTest, find_longest_prefix_suffix_substring) {
         LongTightString s1(p.first);
         LongTightString s2(p.second);
         EXPECT_TRUE(compare(s1.unimport(), s2.unimport(), find_longest_common_substring_checker(p.first, p.second, true, false),
-                            find_longest_prefix_substring(s1, s2)))
+                            find_longest_prefix_substring(s1, s2), true))
             << p.first << " " << p.second << " "
             << find_longest_common_substring_checker(p.first, p.second, true, false).dump()  << " "
             << find_longest_prefix_substring(s1, s2).dump();
         EXPECT_TRUE(compare(s1.unimport(), s2.unimport(), find_longest_common_substring_checker(p.first, p.second, false, true),
-                            find_longest_suffix_substring(s1, s2)))
+                            find_longest_suffix_substring(s1, s2), true))
             << p.first << " " << p.second << " "
             << find_longest_common_substring_checker(p.first, p.second, false, true).dump()  << " "
             << find_longest_suffix_substring(s1, s2).dump();
-        //     EXPECT_TRUE(s1.unimport(), s2.unimport(), compare(find_longest_common_substring_checker(p.first, p.second),
-        //                         find_longest_common_substring(s1, s2)))
-        //         << p.first << " " << p.second << " "
-        //         << find_longest_common_substring_checker(p.first, p.second).dump()  << " "
-        //         << find_longest_common_substring(s1, s2).dump();
+        EXPECT_TRUE(compare(s1.unimport(), s2.unimport(), find_longest_common_substring_checker(p.first, p.second, false, false),
+                            find_largest_common_substring(s1, s2), true))
+            << p.first << " " << p.second << " "
+            << find_longest_common_substring_checker(p.first, p.second).dump()  << " "
+            << find_largest_common_substring(s1, s2).dump();
     }
 }
 

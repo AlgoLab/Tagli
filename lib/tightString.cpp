@@ -417,15 +417,34 @@ void LongTightString::unshift(const LongTightString & s) {
     _length += new_length;
 }
 
-bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2) {
+bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2, bool debug=false) {
     if ((m1.length == m2.length) &&
         (m1.begin1 == m2.begin1) &&
         (m1.begin2 == m2.begin2))
         return true;
     if (m1.length == m2.length &&
-        s1.compare(m1.begin1, m1.length, s1, m2.begin1, m2.length) == 0 &&
-        s2.compare(m1.begin2, m1.length, s2, m2.begin2, m2.length) == 0
-        )
+        s1.compare(m1.begin1, m1.length, s2, m1.begin2, m1.length) == 0 &&
+        s1.compare(m2.begin1, m2.length, s2, m2.begin2, m2.length) == 0)
         return true;
+    int diff = m1.begin2-m2.begin2;
+    cout << diff << endl;
+    if (debug) {
+        cout << "m1:"  << "begin1: " << m1.begin1 << ", begin2: " << m1.begin2 << ", length: " << m1.length << endl;
+        cout << "m2:"  << "begin1: " << m2.begin1 << ", begin2: " << m2.begin2 << ", length: " << m2.length << endl ;
+        cout << "s1:" << s1 << "(" << s1.size() << ")" << endl;
+        cout << "s2:" << s2 << "(" << s2.size() << ")" << endl;
+        cout << "s1m1:" << s1.substr(m1.begin1, m1.length) << "/" << endl;
+        cout << "s2m1:" << s2.substr(m1.begin2, m1.length) << "/" <<  endl << endl;
+        cout << "s1m2:" << s1.substr(m2.begin1, m2.length) << "/" <<  endl;
+        cout << "s2m2:" << s2.substr(m2.begin2, m2.length) << "/" <<  endl;
+        cout << (m1.length == m2.length);
+        cout << (m1.begin1 == m2.begin1);
+        cout << (m1.begin2 == m2.begin2);
+        cout <<         s1.compare(m1.begin1, m1.length, s1, m2.begin1, m2.length);
+        cout <<         s2.compare(m1.begin2, m1.length, s2, m2.begin2, m2.length);
+        cout << "\n";
+
+
+    }
     return false;
 }
