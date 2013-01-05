@@ -148,8 +148,11 @@ public:
     }
 
     void update(const LongTightStringSequence& s, const len_t l) {
-        _sequence=s;
-        _length=l;
+        // Enforce the maximum length of a string
+        if (l <= LONGTIGHTSTRING_LEN) {
+            _sequence=s;
+            _length=l;
+        }
     }
 
 
