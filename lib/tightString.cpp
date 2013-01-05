@@ -115,19 +115,23 @@ NucleotideBits encodeNucleotide(Nucleotide nucleotide) {
 
 
 void LongTightString::import(const std::string& s) {
+    assert(s.length() <= LONGTIGHTSTRING_LEN);
     _length = s.length();
     _sequence.reset();
+//  for (unsigned int i=0; i<LONGTIGHTSTRING_LEN )
+    // cout << "Import1:" << this->dump() << endl;
     for (size_t i=0; i<_length; i++) {
         NucleotideBits t = encodeNucleotide(s[_length-i-1]);
         _sequence[2*i] = (t & 0x1);
         _sequence[2*i+1] = (t & 0x2);
     }
+    // cout << "Import2:" << this->dump() << endl;
 }
 
 std::string LongTightString::unimport(void) {
     std::string s(_length, ' ');
     NucleotideBits t;
-    for (unsigned short int i=0; i < _length; ++i) {
+    for (uint32_t i=0; i < _length; ++i) {
         t= _sequence[2*(_length-i-1)] + (_sequence[2*(_length-i-1)+1]*2);
         s[i]= decodeNucleotide(t & 0x3);
     }
@@ -159,10 +163,9 @@ len_t overlap(const LongTightString & str1, const LongTightString & str2) {
 //  cout << str1.sequence() << "," << str2.sequence() << "=" << len << endl;
     LongTightStringSequence s1 = str1.sequence();
     LongTightStringSequence s2 = str2.sequence();
-//  cout << s1 << "," << s2 << "=" <<  (2*(LONGTIGHTSTRING_LEN/2 - len)) << endl;
-    s1 <<= (2*(LONGTIGHTSTRING_LEN/2 - len));
+    s1 <<= (LONGTIGHTSTRING_BITSET_LEN-2*len);
 //  cout << s1 << "," << s2 << endl;
-    s1 >>= (2*(LONGTIGHTSTRING_LEN/2 - len));
+    s1 >>= (LONGTIGHTSTRING_BITSET_LEN-2*len);
 //  cout << s1 << "," << s2 << endl;
     s2 >>= 2*(str2.length() - len);
 //  cout << s1 << "," << s2 << endl;
@@ -333,9 +336,10 @@ LongTightString LongTightString::prefix(const len_t length) {
 LongTightString LongTightString::suffix(const len_t length) {
     len_t actual_len = std::min(length, _length);
     LongTightString &result = *this;
-    result.update((_sequence<<(LONGTIGHTSTRING_LEN - actual_len))>>(LONGTIGHTSTRING_LEN - actual_len), actual_len);
+    result.update((_sequence<<(LONGTIGHTSTRING_BITSET_LEN-2*actual_len))>>(LONGTIGHTSTRING_BITSET_LEN-2*actual_len), actual_len);
     return result;
 }
+
 bool LongTightString::is_prefix(const LongTightString & s) {
     if (s.length() <= _length) {
         LongTightString my_prefix = this->prefix(s.length());
@@ -353,8 +357,10 @@ bool LongTightString::is_suffix(const LongTightString & s) {
 
 NucleotideBits LongTightString::pop() {
     NucleotideBits t= _sequence[0] + (_sequence[1]*2);
+    // cout << "Before: " << this->dump() << endl;
     _sequence >>= 2;
     --_length;
+    // cout << "After:  " <<  this->dump() << endl;
     return t;
 }
 NucleotideBits LongTightString::shift() {
@@ -390,31 +396,37 @@ len_t longest_right_overlap(const LongTightString & s, const std::vector<LongTig
 LongTightString LongTightString::pop(len_t length) {
     len_t actual_len = std::min(length, _length);
     LongTightString result = this->suffix(actual_len);
-    _sequence >>= actual_len;
+    _sequence >>= (2*actual_len);
     _length -= actual_len;
     return result;
 }
 LongTightString LongTightString::shift(len_t length) {
     len_t actual_len = std::min(length, _length);
     LongTightString result = this->prefix(actual_len);
-    _sequence <<= (LONGTIGHTSTRING_LEN - _length + actual_len);
-    _sequence >>= (LONGTIGHTSTRING_LEN - _length + actual_len);
+    _sequence <<= (2*(LONGTIGHTSTRING_LEN - _length + actual_len));
+    _sequence >>= (2*(LONGTIGHTSTRING_LEN - _length + actual_len));
     _length -= actual_len;
     return result;
 }
 void LongTightString::push(const LongTightString & s) {
     LongTightStringSequence new_sequence = s.sequence();
     len_t new_length = s.length();
-    _sequence <<= new_length;
+    _sequence <<= (2*new_length);
     _sequence |= new_sequence;
     _length += new_length;
 }
 void LongTightString::unshift(const LongTightString & s) {
     LongTightStringSequence new_sequence = s.sequence();
     len_t new_length = s.length();
-    new_sequence <<= (2 * new_length);
+    // cout << "A" << new_sequence << endl;
+    new_sequence <<= (2*_length);
+    // cout << "B" << new_sequence << endl;
+    // cout << "C" << _sequence << endl;
+    // cout << this->unimport() << endl;
     _sequence |= new_sequence;
+    // cout << "D" << _sequence << endl;
     _length += new_length;
+    // cout << this->unimport() << endl;
 }
 
 bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2, bool debug=false) {

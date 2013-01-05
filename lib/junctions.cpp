@@ -84,7 +84,7 @@ void Junction::add_read(LongTightString read) {
 
         // Since we have determined the *multiple* side,
         // the single_side is fixed and cannot be changed, but only extended
-        // in the direction opposite to the junction
+        // in the direction opposite to the junxction
         if (is_left and read_left > THRESHOLD_MERGE_SUBSTRINGS) {
             // extend to the left
             single_side.update(merge(read.sequence(), single_side.sequence(), read_left),

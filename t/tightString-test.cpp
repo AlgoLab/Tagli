@@ -96,7 +96,8 @@ protected:
         long_strings.push_back("TTTTTTTTTATTTTTTTTTTTTTTTTTTTTTTCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTG");
         long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
         long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
-
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAATAAAACAGTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
+        // long_strings.push_back("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT");
         strings.insert(strings.end(), kmers.begin(), kmers.end());
         strings.insert(strings.end(), short_strings.begin(), short_strings.end());
         strings.insert(strings.end(), long_strings.begin(), long_strings.end());
@@ -105,8 +106,8 @@ protected:
         string_pairs.push_back(make_pair("AAAAAAAAAAAA", "AAAAAAAAAAAA"));
         string_pairs.push_back(make_pair("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                                          "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
-        string_pairs.push_back(make_pair("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
-                                         "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"));
+        // string_pairs.push_back(make_pair("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT",
+        //                                  "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"));
 
         for (auto s1 : short_strings)
             for (auto s2 : short_strings)
@@ -191,12 +192,15 @@ TEST_F(LongTightStringTest, pop) {
     for (auto x : strings) {
         if (x.length() == 0) continue;
         string orig_x = x;
+        LongTightString lts_orig(x);
         LongTightString lts(x);
+        // cout << "TestPop1:"  << lts.dump() << endl;
         NucleotideBits z = lts.pop();
+        // cout << "TestPop2:"  << lts.dump() << endl;
         string tested = lts.unimport();
         string ok = x.substr(0, x.length() - 1);
         EXPECT_EQ(ok.length(), tested.length());
-        EXPECT_EQ(ok, tested) << orig_x;
+        EXPECT_EQ(ok, tested) << "           " << orig_x << endl << lts_orig.dump() << endl <<  lts.dump();
     }
 }
 
@@ -229,7 +233,7 @@ TEST_F(LongTightStringTest, prefix) {
     for (auto x : strings) {
         LongTightString t(x);
         for (len_t l = 0; l <= x.length(); ++l)
-            EXPECT_EQ(x.substr(0, l), t.prefix(l).unimport());
+            EXPECT_EQ(x.substr(0, l), t.prefix(l).unimport()) << x << " " << l;
     }
 }
 
@@ -295,4 +299,20 @@ TEST_F(LongTightStringTest, overlap) {
     EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
     EXPECT_EQ(36, overlapHelper("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
                                 "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"));
+}
+
+TEST_F(LongTightStringTest, concatenate) {
+    for (auto p : string_pairs) {
+        if (p.first.size()+p.second.size() > LONGTIGHTSTRING_LEN) continue;
+        // do not test if the resulting string is too long
+        LongTightString s1(p.first);
+        LongTightString s2(p.second);
+        LongTightString s3(p.first);
+        string result = p.first;
+        result.append(p.second);
+        s1.push(s2);
+        s2.unshift(s3);
+        EXPECT_EQ(result, s1.unimport()) << "push    : " << p.first << "/" << p.second << endl;
+        EXPECT_EQ(result, s2.unimport()) << "unshift : " <<  p.first << "/" << p.second << endl;
+    }
 }

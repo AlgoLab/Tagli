@@ -183,6 +183,8 @@ int main(void)
                     ROOT_TRACE("Read 1");
                     ROOT_TRACE(lts_revcom.dump());
                     (j==0) ? junctions[index].add_read(lts_straigth) : junctions[index].add_read(lts_revcom);
+                    ROOT_TRACE("Resulting junction");
+                    ROOT_TRACE(junctions[index].dump());
                 }
             }
         }

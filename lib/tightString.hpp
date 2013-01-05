@@ -40,8 +40,12 @@ typedef unsigned short int NucleotideBits;
 typedef unsigned char Nucleotide;
 typedef uint64_t Fingerprint;
 typedef std::string Read;
-#define LONGTIGHTSTRING_LEN 192
-typedef std::bitset<LONGTIGHTSTRING_LEN> LongTightStringSequence;
+#define LONGTIGHTSTRING_LEN 96
+#define LONGTIGHTSTRING_BITSET_LEN 192
+typedef std::bitset<LONGTIGHTSTRING_BITSET_LEN> LongTightStringSequence;
+
+
+
 
 static const NucleotideBits Adenine = 0;
 static const NucleotideBits Cytosine = 1;
@@ -93,12 +97,12 @@ private:
 */
 
 
-typedef unsigned short int len_t;
+typedef uint16_t len_t;
 
-/* The LongTightString class is a compact representation of a DNA string no longer than LONGTIGHTSTRING_LEN/2 bps
-   using a LONGTIGHTSTRING_LEN bits bitset.
+/* The LongTightString class is a compact representation of a DNA string no longer than LONGTIGHTSTRING_LEN bps
+   using a LONGTIGHTSTRING_BITSET_LEN bits bitset.
 
-   A string shorter than LONGTIGHTSTRING_LEN/2 characters uses the positions with smallest possible index.
+   A string shorter than LONGTIGHTSTRING_LEN characters uses the positions with smallest possible index.
    Moreover in position 0 is stored the last character of the string, so that applying the method sequence()
    gives a string that can be printed as an intuitive representation of the bitset.
 */
@@ -179,7 +183,9 @@ public:
 
     std::string dump() {
         std::stringstream result;
-        result << "sequence: " << this->unimport() << ", length: " << _length << ", encoded " << _sequence ;
+        result << "sequence: " << this->unimport() << ",\nlength: " << _length << ",\nencoded " ;
+        for (int i=LONGTIGHTSTRING_BITSET_LEN-1; i >= 0 ; i--)
+            result << _sequence[i];
         return result.str();
     }
 
