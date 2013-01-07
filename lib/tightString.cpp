@@ -118,14 +118,11 @@ void LongTightString::import(const std::string& s) {
     assert(s.length() <= LONGTIGHTSTRING_LEN);
     _length = s.length();
     _sequence.reset();
-//  for (unsigned int i=0; i<LONGTIGHTSTRING_LEN )
-    // cout << "Import1:" << this->dump() << endl;
     for (size_t i=0; i<_length; i++) {
         NucleotideBits t = encodeNucleotide(s[_length-i-1]);
         _sequence[2*i] = (t & 0x1);
         _sequence[2*i+1] = (t & 0x2);
     }
-    // cout << "Import2:" << this->dump() << endl;
 }
 
 std::string LongTightString::unimport(void) {
@@ -141,9 +138,6 @@ std::string LongTightString::unimport(void) {
 
 len_t overlap(Fingerprint f1, Fingerprint f2) {
     for (uint16_t len= KMER_LENGTH, d=2; len>0; d+=2, len-- ) {
-        // cout << hex << f1 <<"\n";
-        // cout << f2 <<"\n";
-        // cout << "Len = " << len <<". Shift=" << d << "\n";
         if (f1 == f2)
             return len;
         f1 = (f1 << 2);
@@ -160,17 +154,12 @@ len_t overlap(const TightString & str1, const TightString & str2) {
 
 len_t overlap(const LongTightString & str1, const LongTightString & str2) {
     len_t len = std::min(str1.length(), str2.length());
-//  cout << str1.sequence() << "," << str2.sequence() << "=" << len << endl;
     LongTightStringSequence s1 = str1.sequence();
     LongTightStringSequence s2 = str2.sequence();
     s1 <<= (LONGTIGHTSTRING_BITSET_LEN-2*len);
-//  cout << s1 << "," << s2 << endl;
     s1 >>= (LONGTIGHTSTRING_BITSET_LEN-2*len);
-//  cout << s1 << "," << s2 << endl;
     s2 >>= 2*(str2.length() - len);
-//  cout << s1 << "," << s2 << endl;
     for (; len>0; len-- ) {
-//  cout << s1 << "," << s2 << endl;
         if (s1 == s2)
             return len;
         s2 >>= 2;
@@ -357,10 +346,8 @@ bool LongTightString::is_suffix(const LongTightString & s) {
 
 NucleotideBits LongTightString::pop() {
     NucleotideBits t= _sequence[0] + (_sequence[1]*2);
-    // cout << "Before: " << this->dump() << endl;
     _sequence >>= 2;
     --_length;
-    // cout << "After:  " <<  this->dump() << endl;
     return t;
 }
 NucleotideBits LongTightString::shift() {
@@ -394,7 +381,7 @@ len_t longest_right_overlap(const LongTightString & s, const std::vector<LongTig
 }
 
 LongTightString LongTightString::pop(len_t length) {
-    len_t actual_len = std::min(length, _length);
+    len_t actual_len = min(length, _length);
     LongTightString result = this->suffix(actual_len);
     _sequence >>= (2*actual_len);
     _length -= actual_len;
@@ -418,15 +405,9 @@ void LongTightString::push(const LongTightString & s) {
 void LongTightString::unshift(const LongTightString & s) {
     LongTightStringSequence new_sequence = s.sequence();
     len_t new_length = s.length();
-    // cout << "A" << new_sequence << endl;
     new_sequence <<= (2*_length);
-    // cout << "B" << new_sequence << endl;
-    // cout << "C" << _sequence << endl;
-    // cout << this->unimport() << endl;
     _sequence |= new_sequence;
-    // cout << "D" << _sequence << endl;
     _length += new_length;
-    // cout << this->unimport() << endl;
 }
 
 bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2, bool debug=false) {
@@ -439,8 +420,8 @@ bool compare(std::string s1, std::string s2, const Match & m1, const Match & m2,
         s1.compare(m2.begin1, m2.length, s2, m2.begin2, m2.length) == 0)
         return true;
     int diff = m1.begin2-m2.begin2;
-    cout << diff << endl;
     if (debug) {
+        cout << diff << endl;
         cout << "m1:"  << "begin1: " << m1.begin1 << ", begin2: " << m1.begin2 << ", length: " << m1.length << endl;
         cout << "m2:"  << "begin1: " << m2.begin1 << ", begin2: " << m2.begin2 << ", length: " << m2.length << endl ;
         cout << "s1:" << s1 << "(" << s1.size() << ")" << endl;
