@@ -187,14 +187,18 @@ void Junction::add_read(LongTightString read) {
     }
     ROOT_TRACE("Determine junction type: " << is_left);
     if (is_left) {
+        ROOT_TRACE("Cutting read at position       : " << read.length()-(read_substring.begin1+read_substring.length));
         add_multiple(read.suffix(read.length()-(read_substring.begin1+read_substring.length)));
+        ROOT_TRACE("Cutting single_side at position: " << single_side.length()-(read_substring.begin2+read_substring.length));
         add_multiple(single_side.pop(single_side.length()-(read_substring.begin2+read_substring.length)));
         if (read_substring.begin1 > 0) {
             ROOT_TRACE("extend single_side");
             single_side.unshift(read.prefix(read_substring.begin1));
         }
     } else {
+        ROOT_TRACE("Cutting read at position       : " << read_substring.begin1);
         add_multiple(read.prefix(read_substring.begin1));
+        ROOT_TRACE("Cutting single_side at position: " << read_substring.begin2);
         add_multiple(single_side.shift(read_substring.begin2));
         if (read_substring.begin1 + read_substring.length < read.length() - 1)  {
             ROOT_TRACE("extend single_side");
