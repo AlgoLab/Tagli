@@ -372,6 +372,8 @@ $(THIRDPARTY_DEPS)/lib/libcxxmph.a:
 	@echo "Building and installing CMPH..." ; \
 	mkdir -pv ${THIRDPARTY_DEPS}/ && \
 	pushd ${THIRDPARTY_DIR}/cmph && \
+	libtoolize && \
+	automake && \
 	./configure --enable-cxxmph --disable-shared --prefix=${THIRDPARTY_DEPS_FULL} && \
 	make clean && \
 	pushd cxxmph && \
@@ -408,7 +410,7 @@ $(LIB_DIR)/junctions.o: $(LIB_DIR)/junctions.cpp $(LIB_DIR)/junctions.hpp $(LIB_
 	$(CXX) -c $(CXXFLAGS) $(CXXFLAGS_EXTRA) -o $@  $< $(INCLUDE)
 
 run_test: $(BIN_DIR)/test build gtests
-	time $(BIN_DIR)/test
+	time $(BIN_DIR)/tightString-test
 
 
 build: $(BIN_DIR)/tagli1
@@ -426,7 +428,6 @@ GTEST_CXXFLAGS = $(CXXFLAGS) -I$(GTEST_DIR)/include -I$(INCLUDE)  -DGTEST_HAS_PT
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
 TESTS = $(BIN_DIR)/tightString-test
-
 
 # House-keeping build targets.
 
