@@ -163,6 +163,47 @@ TEST_F(LongTightStringTest, unimport) {
     }
 }
 
+TEST_F(LongTightStringTest, suffix) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        for (size_t len=1; len<=x.length(); len++)
+        {
+            LongTightString lts(x);
+            // cout << "TestPop1:"  << lts.dump() << endl;
+            LongTightString z = lts.suffix(len);
+            // cout << "TestPop2:"  << lts.dump() << endl;
+            string tested = z.unimport();
+            string ok = x.substr(x.length() - len);
+            EXPECT_EQ(ok.length(), z.length());
+            EXPECT_EQ(ok, tested) << "           " << x << "(" << len << ")" << endl << z.dump() << endl << ok;
+            // check that the function is not destructive
+            EXPECT_EQ(lts.length(), x.length());
+            EXPECT_EQ(lts.unimport(), x) << "           " << x << "(" << len << ")" << endl <<  lts.dump();
+        }
+    }
+}
+
+TEST_F(LongTightStringTest, prefix) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        for (size_t len=1; len<=x.length(); len++)
+        {
+            LongTightString lts(x);
+            // cout << "TestPop1:"  << lts.dump() << endl;
+            LongTightString z = lts.prefix(len);
+            // cout << "TestPop2:"  << lts.dump() << endl;
+            string tested = z.unimport();
+            string ok = x.substr(0, len);
+            EXPECT_EQ(ok.length(), z.length());
+            EXPECT_EQ(ok, tested) << "           " << x << "(" << len << ")" << endl << z.dump() << endl << ok;
+            // check that the function is not destructive
+            EXPECT_EQ(lts.length(), x.length());
+            EXPECT_EQ(lts.unimport(), x) << "           " << x << "(" << len << ")" << endl <<  lts.dump();
+        }
+    }
+}
+
+
 
 
 const vector<string> build_suffixes(string s) {
@@ -204,6 +245,50 @@ TEST_F(LongTightStringTest, pop) {
     }
 }
 
+TEST_F(LongTightStringTest, pop_args) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        for (size_t len=1; len<=x.length(); len++)
+        {
+            LongTightString lts_orig(x);
+            LongTightString lts(x);
+            // cout << "TestPop1:"  << lts.dump() << endl;
+            LongTightString z = lts.pop(len);
+            // cout << "TestPop2:"  << lts.dump() << endl;
+            string tested = lts.unimport();
+            string ok = x.substr(0, x.length() - len);
+            EXPECT_EQ(ok.length(), tested.length());
+            EXPECT_EQ(ok, tested) << "           " << x << "(" << len << ")" << endl << lts_orig.dump() << endl <<  lts.dump();
+            string tested_rest = z.unimport();
+            string ok_rest = x.substr(x.length() - len);
+            EXPECT_EQ(ok_rest.length(), len);
+            EXPECT_EQ(ok_rest, tested_rest) << "           " << x << "(" << len << ")" << endl << lts_orig.dump() << endl <<  lts.dump() << endl <<  z.dump();
+        }
+    }
+}
+
+TEST_F(LongTightStringTest, shift_args) {
+    for (auto x : strings) {
+        if (x.length() == 0) continue;
+        for (size_t len=1; len<=x.length(); len++)
+        {
+            LongTightString lts_orig(x);
+            LongTightString lts(x);
+            // cout << "TestPop1:"  << lts.dump() << endl;
+            LongTightString z = lts.shift(len);
+            // cout << "TestPop2:"  << lts.dump() << endl;
+            string tested = lts.unimport();
+            string ok = x.substr(len);
+            EXPECT_EQ(ok.length(), tested.length());
+            EXPECT_EQ(ok, tested) << "           " << x << "(" << len << ")" << endl << lts_orig.dump() << endl <<  lts.dump();
+            string tested_rest = z.unimport();
+            string ok_rest = x.substr(0, len);
+            EXPECT_EQ(ok_rest.length(), len);
+            EXPECT_EQ(ok_rest, tested_rest) << "           " << x << "(" << len << ")" << endl << lts_orig.dump() << endl <<  lts.dump() << endl <<  z.dump();
+        }
+    }
+}
+
 TEST_F(LongTightStringTest, build_suffixes) {
     kmers.insert(kmers.end(), strings.begin(), strings.end());
     for (auto x : kmers) {
@@ -227,14 +312,6 @@ TEST_F(TightStringTest, overlap) {
     EXPECT_EQ(32, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
     EXPECT_EQ(0, overlapHelper("CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", "TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
     EXPECT_EQ(1, overlapHelper("TAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", "TCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT"));
-}
-
-TEST_F(LongTightStringTest, prefix) {
-    for (auto x : strings) {
-        LongTightString t(x);
-        for (len_t l = 0; l <= x.length(); ++l)
-            EXPECT_EQ(x.substr(0, l), t.prefix(l).unimport()) << x << " " << l;
-    }
 }
 
 TEST_F(LongTightStringTest, find_longest_prefix_suffix_substring) {
