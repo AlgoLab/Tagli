@@ -324,8 +324,7 @@ LongTightString LongTightString::prefix(const len_t length) {
 }
 LongTightString LongTightString::suffix(const len_t length) {
     len_t actual_len = std::min(length, _length);
-    LongTightString &result = *this;
-    result.update((_sequence<<(LONGTIGHTSTRING_BITSET_LEN-2*actual_len))>>(LONGTIGHTSTRING_BITSET_LEN-2*actual_len), actual_len);
+    LongTightString result((_sequence<<(LONGTIGHTSTRING_BITSET_LEN-2*actual_len))>>(LONGTIGHTSTRING_BITSET_LEN-2*actual_len), actual_len);
     return result;
 }
 
