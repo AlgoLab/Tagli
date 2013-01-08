@@ -356,7 +356,7 @@ endif
 
 ## Uncomment the following line to enable compiler optimizations
 CXXFLAGS+=-O2 -march=native
-CXXFLAGS_EXTRA= -Wall -Wextra -pedantic -Weffc++
+CXXFLAGS_EXTRA= -Wall -Wextra -pedantic #-Weffc++
 
 ## Uncomment the following line to disable assertions
 #CXXFLAGS+=-DNDEBUG
