@@ -372,8 +372,7 @@ $(THIRDPARTY_DEPS)/lib/libcxxmph.a:
 	@echo "Building and installing CMPH..." ; \
 	mkdir -pv ${THIRDPARTY_DEPS}/ && \
 	pushd ${THIRDPARTY_DIR}/cmph && \
-	libtoolize && \
-	automake && \
+	autoreconf --force && \
 	./configure --enable-cxxmph --disable-shared --prefix=${THIRDPARTY_DEPS_FULL} && \
 	make clean && \
 	pushd cxxmph && \
