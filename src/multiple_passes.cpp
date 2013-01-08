@@ -262,5 +262,5 @@ int main(void)
 */
     ROOT_INFO("Begin Output");
     for (auto i : valid_indices)
-        cout << junctions[i].dump() << endl;
+        cout << junctions[i].simpledump() << endl;
 }

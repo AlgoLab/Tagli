@@ -79,6 +79,19 @@ public:
         }
         return result.str();
     };
+    std::string simpledump() {
+        std::stringstream result;
+        result << single_side.unimport() << ",";
+        result << multiple_side.size() << ",";
+        for (unsigned int i=0; i<multiple_side.size(); ++i) {
+            result << multiple_side[i].unimport() << ",";
+        }
+        if (is_left)
+            result << "1";
+        else
+            result << "0";
+        return result.str();
+    };
 // private:
 //     void find_largest_common_substring(const LongTightString &);
 };
