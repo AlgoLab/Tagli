@@ -155,7 +155,7 @@ static int bdz_ph_generate_queue(cmph_uint32 nedges, cmph_uint32 nvertices, bdz_
 		v0=graph3->edges[i].vertices[0];
 		v1=graph3->edges[i].vertices[1];
 		v2=graph3->edges[i].vertices[2];
-		if(graph3->vert_degree[v0]==1 || 
+		if(graph3->vert_degree[v0]==1 ||
 				graph3->vert_degree[v1]==1 ||
 				graph3->vert_degree[v2]==1){
 			if(!GETBIT(marked_edge,i)) {
@@ -542,7 +542,7 @@ void bdz_ph_destroy(cmph_t *mphf)
 /** \fn void bdz_ph_pack(cmph_t *mphf, void *packed_mphf);
  *  \brief Support the ability to pack a perfect hash function into a preallocated contiguous memory space pointed by packed_mphf.
  *  \param mphf pointer to the resulting mphf
- *  \param packed_mphf pointer to the contiguous memory area used to store the resulting mphf. The size of packed_mphf must be at least cmph_packed_size() 
+ *  \param packed_mphf pointer to the contiguous memory area used to store the resulting mphf. The size of packed_mphf must be at least cmph_packed_size()
  */
 void bdz_ph_pack(cmph_t *mphf, void *packed_mphf)
 {

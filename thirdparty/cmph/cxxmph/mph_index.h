@@ -63,7 +63,7 @@ class MPHIndex {
   void clear();
 
   // Advanced users functions. Please avoid unless you know what you are doing.
-  uint32_t perfect_hash_size() const { return n_; } 
+  uint32_t perfect_hash_size() const { return n_; }
   template <class SeededHashFcn, class Key>  // must agree with Reset
   uint32_t perfect_hash(const Key& x) const;  // way faster than the minimal
   template <class SeededHashFcn, class Key>  // must agree with Reset
@@ -85,7 +85,7 @@ class MPHIndex {
 
   // Algorithm parameters
   // Perfect hash function density. If this was a 2graph,
-  // then probability of having an acyclic graph would be 
+  // then probability of having an acyclic graph would be
   // sqrt(1-(2/c)^2). See section 3 for details.
   // http://www.it-c.dk/people/pagh/papers/simpleperf.pdf
   double c_;
@@ -125,7 +125,7 @@ bool MPHIndex::Reset(
   m_ = size;
   r_ = static_cast<uint32_t>(ceil((c_*m_)/3));
   if ((r_ % 2) == 0) r_ += 1;
-  // This can be used to speed mods, but increases occupation too much. 
+  // This can be used to speed mods, but increases occupation too much.
   // Needs to try http://gmplib.org/manual/Integer-Exponentiation.html instead
   if (square_) r_ = nextpoweroftwo(r_);
   nest_displacement_[0] = 0;
@@ -160,7 +160,7 @@ bool MPHIndex::Mapping(
     ForwardIterator begin, ForwardIterator end,
     std::vector<TriGraph::Edge>* edges, std::vector<uint32_t>* queue) {
   TriGraph graph(n_, m_);
-  for (ForwardIterator it = begin; it != end; ++it) { 
+  for (ForwardIterator it = begin; it != end; ++it) {
     h128 h = SeededHashFcn().hash128(*it, hash_seed_[0]);
     // for (int i = 0; i < 3; ++i) h[i] = SeededHashFcn()(*it, hash_seed_[i]);
     uint32_t v0 = h[0] % r_;
@@ -235,7 +235,7 @@ template <bool minimal, bool square, class Key, class HashFcn>
 struct FlexibleMPHIndex {};
 
 template <class Key, class HashFcn>
-struct FlexibleMPHIndex<true, false, Key, HashFcn> 
+struct FlexibleMPHIndex<true, false, Key, HashFcn>
     : public SimpleMPHIndex<Key, HashFcn> {
   FlexibleMPHIndex() : SimpleMPHIndex<Key, HashFcn>(false) {}
   uint32_t index(const Key& key) const {
@@ -243,7 +243,7 @@ struct FlexibleMPHIndex<true, false, Key, HashFcn>
   uint32_t size() const { return MPHIndex::minimal_perfect_hash_size(); }
 };
 template <class Key, class HashFcn>
-struct FlexibleMPHIndex<false, true, Key, HashFcn> 
+struct FlexibleMPHIndex<false, true, Key, HashFcn>
     : public SimpleMPHIndex<Key, HashFcn> {
   FlexibleMPHIndex() : SimpleMPHIndex<Key, HashFcn>(true) {}
   uint32_t index(const Key& key) const {
@@ -251,7 +251,7 @@ struct FlexibleMPHIndex<false, true, Key, HashFcn>
   uint32_t size() const { return MPHIndex::perfect_hash_size(); }
 };
 template <class Key, class HashFcn>
-struct FlexibleMPHIndex<false, false, Key, HashFcn> 
+struct FlexibleMPHIndex<false, false, Key, HashFcn>
     : public SimpleMPHIndex<Key, HashFcn> {
   FlexibleMPHIndex() : SimpleMPHIndex<Key, HashFcn>(false) {}
   uint32_t index(const Key& key) const {

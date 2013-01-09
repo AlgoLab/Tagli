@@ -29,7 +29,7 @@ dnl Checks for headers
 AC_CHECK_HEADERS([getopt.h math.h])
 
 dnl Checks for libraries.
-LT_LIB_M  
+LT_LIB_M
 LDFLAGS="$LIBM $LDFLAGS"
 CFLAGS="-Wall"
 

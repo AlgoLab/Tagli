@@ -36,7 +36,7 @@ trigraph_test_SOURCES = trigraph_test.cc
 
 # Bad dependency, do not compile by default.
 # bm_index_LDADD = libcxxmph_bm.la -lcmph
-# bm_index_SOURCES = bm_index.cc 
+# bm_index_SOURCES = bm_index.cc
 
 bm_map_LDADD = libcxxmph_bm.la
 bm_map_SOURCES = bm_map.cc

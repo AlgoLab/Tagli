@@ -14,7 +14,7 @@ extern "C"
 typedef struct __config_t cmph_config_t;
 typedef struct __cmph_t cmph_t;
 
-typedef struct 
+typedef struct
 {
         void *data;
         cmph_uint32 nkeys;
@@ -37,10 +37,10 @@ void cmph_io_vector_adapter_destroy(cmph_io_adapter_t * key_source);
 cmph_io_adapter_t *cmph_io_byte_vector_adapter(cmph_uint8 ** vector, cmph_uint32 nkeys);
 void cmph_io_byte_vector_adapter_destroy(cmph_io_adapter_t * key_source);
 
-cmph_io_adapter_t *cmph_io_struct_vector_adapter(void * vector, 
-                                                 cmph_uint32 struct_size, 
-                                                 cmph_uint32 key_offset, 
-                                                 cmph_uint32 key_len, 
+cmph_io_adapter_t *cmph_io_struct_vector_adapter(void * vector,
+                                                 cmph_uint32 struct_size,
+                                                 cmph_uint32 key_offset,
+                                                 cmph_uint32 key_len,
                                                  cmph_uint32 nkeys);
 
 void cmph_io_struct_vector_adapter_destroy(cmph_io_adapter_t * key_source);
@@ -62,7 +62,7 @@ void cmph_config_destroy(cmph_config_t *mph);
 cmph_t *cmph_new(cmph_config_t *mph);
 
 /** cmph_uint32 cmph_search(cmph_t *mphf, const char *key, cmph_uint32 keylen);
- *  \brief Computes the mphf value. 
+ *  \brief Computes the mphf value.
  *  \param mphf pointer to the resulting function
  *  \param key is the key to be hashed
  *  \param keylen is the key legth in bytes
@@ -80,8 +80,8 @@ cmph_t *cmph_load(FILE *f);
 /** \fn void cmph_pack(cmph_t *mphf, void *packed_mphf);
  *  \brief Support the ability to pack a perfect hash function into a preallocated contiguous memory space pointed by packed_mphf.
  *  \param mphf pointer to the resulting mphf
- *  \param packed_mphf pointer to the contiguous memory area used to store the 
- *  \param resulting mphf. The size of packed_mphf must be at least cmph_packed_size() 
+ *  \param packed_mphf pointer to the contiguous memory area used to store the
+ *  \param resulting mphf. The size of packed_mphf must be at least cmph_packed_size()
  */
 void cmph_pack(cmph_t *mphf, void *packed_mphf);
 
@@ -93,7 +93,7 @@ void cmph_pack(cmph_t *mphf, void *packed_mphf);
 cmph_uint32 cmph_packed_size(cmph_t *mphf);
 
 /** cmph_uint32 cmph_search(void *packed_mphf, const char *key, cmph_uint32 keylen);
- *  \brief Use the packed mphf to do a search. 
+ *  \brief Use the packed mphf to do a search.
  *  \param  packed_mphf pointer to the packed mphf
  *  \param key key to be hashed
  *  \param keylen key legth in bytes

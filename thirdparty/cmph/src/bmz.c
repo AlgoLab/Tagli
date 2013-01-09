@@ -324,7 +324,7 @@ static cmph_uint8 bmz_traverse_critical_nodes_heuristic(bmz_config_data_t *bmz, 
 					        if(nunused_g_values == unused_g_values_capacity)
 						{
    						        unused_g_values = (cmph_uint32 *)realloc(unused_g_values, (unused_g_values_capacity + BUFSIZ)*sizeof(cmph_uint32));
-						        unused_g_values_capacity += BUFSIZ;  
+						        unused_g_values_capacity += BUFSIZ;
 						}
 						unused_g_values[nunused_g_values++] = next_g;
 
@@ -394,7 +394,7 @@ static void bmz_traverse_non_critical_nodes(bmz_config_data_t *bmz, cmph_uint8 *
 	{
 	        v1 = graph_vertex_id(bmz->graph, i, 0);
 		v2 = graph_vertex_id(bmz->graph, i, 1);
-		if((GETBIT(visited,v1) && GETBIT(visited,v2)) || (!GETBIT(visited,v1) && !GETBIT(visited,v2))) continue;				  
+		if((GETBIT(visited,v1) && GETBIT(visited,v2)) || (!GETBIT(visited,v1) && !GETBIT(visited,v2))) continue;
 		if(GETBIT(visited,v1)) bmz_traverse(bmz, used_edges, v1, &unused_edge_index, visited);
 	        else bmz_traverse(bmz, used_edges, v2, &unused_edge_index, visited);
 
@@ -403,7 +403,7 @@ static void bmz_traverse_non_critical_nodes(bmz_config_data_t *bmz, cmph_uint8 *
 	for(i = 0; i < bmz->n; i++)
 	{
 		if(!GETBIT(visited,i))
-		{ 
+		{
 		        bmz->g[i] = 0;
 			SETBIT(visited, i);
 			bmz_traverse(bmz, used_edges, i, &unused_edge_index, visited);

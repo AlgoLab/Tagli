@@ -23,7 +23,7 @@ cmph_uint32* random_numbers_vector_new(cmph_uint32 size) {
   return vec;
 }
 
-int cmph_uint32_cmp(const void *a, const void *b) { 
+int cmph_uint32_cmp(const void *a, const void *b) {
   return *(const cmph_uint32*)a - *(const cmph_uint32*)b;
 }
 
@@ -68,14 +68,14 @@ void bm_create(CMPH_ALGO algo, int iters) {
 void bm_search(CMPH_ALGO algo, int iters) {
   int i = 0;
   char *mphf_name;
-  cmph_t* mphf = NULL; 
+  cmph_t* mphf = NULL;
 
   mphf_name = create_lsmap_key(algo, iters);
   mphf = (cmph_t*)lsmap_search(g_created_mphf, mphf_name);
   free(mphf_name);
 
-  cmph_uint32* count = (cmph_uint32*)malloc(sizeof(cmph_uint32)*iters);  
-  cmph_uint32* hash_count = (cmph_uint32*)malloc(sizeof(cmph_uint32)*iters);  
+  cmph_uint32* count = (cmph_uint32*)malloc(sizeof(cmph_uint32)*iters);
+  cmph_uint32* hash_count = (cmph_uint32*)malloc(sizeof(cmph_uint32)*iters);
 
   for (i = 0; i < iters * 100; ++i) {
     cmph_uint32 pos = random() % iters;

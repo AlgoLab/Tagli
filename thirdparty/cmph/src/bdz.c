@@ -114,11 +114,11 @@ static void bdz_dump_graph(bdz_graph3_t* graph3, cmph_uint32 nedges, cmph_uint32
 		printf(" nexts %d %d %d",graph3->edges[i].next_edges[0],
 				graph3->edges[i].next_edges[1],graph3->edges[i].next_edges[2]);
 	};
-	
+
         #ifdef DEBUG
 	for(i=0;i<nvertices;i++){
 		printf("\nfirst for vertice %d %d ",i,graph3->first_edge[i]);
-	
+
 	};
         #endif
 };
@@ -263,7 +263,7 @@ void bdz_config_set_hashfuncs(cmph_config_t *mph, CMPH_HASH *hashfuncs)
 	while(*hashptr != CMPH_HASH_COUNT)
 	{
 		if (i >= 1) break; //bdz only uses one linear hash function
-		bdz->hashfunc = *hashptr;	
+		bdz->hashfunc = *hashptr;
 		++i, ++hashptr;
 	}
 }
@@ -285,22 +285,22 @@ cmph_t *bdz_new(cmph_config_t *mph, double c)
 
 	if (c == 0) c = 1.23; // validating restrictions over parameter c.
 	DEBUGP("c: %f\n", c);
-	bdz->m = mph->key_source->nkeys;	
+	bdz->m = mph->key_source->nkeys;
 	bdz->r = (cmph_uint32)ceil((c * mph->key_source->nkeys)/3);
 	if ((bdz->r % 2) == 0) bdz->r+=1;
 	bdz->n = 3*bdz->r;
 
 	bdz->k = (1U << bdz->b);
 	DEBUGP("b: %u -- k: %u\n", bdz->b, bdz->k);
-	
+
 	bdz->ranktablesize = (cmph_uint32)ceil(bdz->n/(double)bdz->k);
 	DEBUGP("ranktablesize: %u\n", bdz->ranktablesize);
 
-	
+
 	bdz_alloc_graph3(&graph3, bdz->m, bdz->n);
 	bdz_alloc_queue(&edges,bdz->m);
 	DEBUGP("Created hypergraph\n");
-	
+
 	DEBUGP("m (edges): %u n (vertices): %u  r: %u c: %f \n", bdz->m, bdz->n, bdz->r, c);
 
 	// Mapping step
@@ -460,7 +460,7 @@ static void assigning(bdz_config_data_t *bdz, bdz_graph3_t* graph3, bdz_queue_t 
 		}else {
 			SETVALUE1(bdz->g, v2, (8-(GETVALUE(bdz->g,v0)+GETVALUE(bdz->g, v1)))%3);
 			SETBIT(marked_vertices, v2);
-		}		
+		}
 		DEBUGP("A:%u %u %u -- %u %u %u\n", v0, v1, v2, GETVALUE(bdz->g, v0), GETVALUE(bdz->g, v1), GETVALUE(bdz->g, v2));
 	};
 	free(marked_vertices);
@@ -472,7 +472,7 @@ static void ranking(bdz_config_data_t *bdz)
 	cmph_uint32 i, j, offset = 0U, count = 0U, size = (bdz->k >> 2U), nbytes_total = (cmph_uint32)ceil(bdz->n/4.0), nbytes;
 	bdz->ranktable = (cmph_uint32 *)calloc((size_t)bdz->ranktablesize, sizeof(cmph_uint32));
 	// ranktable computation
-	bdz->ranktable[0] = 0;	
+	bdz->ranktable[0] = 0;
 	i = 1;
 	while(1)
 	{
@@ -620,7 +620,7 @@ void bdz_destroy(cmph_t *mphf)
 /** \fn void bdz_pack(cmph_t *mphf, void *packed_mphf);
  *  \brief Support the ability to pack a perfect hash function into a preallocated contiguous memory space pointed by packed_mphf.
  *  \param mphf pointer to the resulting mphf
- *  \param packed_mphf pointer to the contiguous memory area used to store the resulting mphf. The size of packed_mphf must be at least cmph_packed_size() 
+ *  \param packed_mphf pointer to the contiguous memory area used to store the resulting mphf. The size of packed_mphf must be at least cmph_packed_size()
  */
 void bdz_pack(cmph_t *mphf, void *packed_mphf)
 {

@@ -25,7 +25,7 @@ static cmph_uint8 rank_lookup_table[256] ={
 ,  2 , 3 , 3 , 4 , 3 , 4 , 4 , 5 , 3 , 4 , 4 , 5 , 4 , 5 , 5 , 6
 ,  3 , 4 , 4 , 5 , 4 , 5 , 5 , 6 , 4 , 5 , 5 , 6 , 5 , 6 , 6 , 7
 ,  3 , 4 , 4 , 5 , 4 , 5 , 5 , 6 , 4 , 5 , 5 , 6 , 5 , 6 , 6 , 7
-,  4 , 5 , 5 , 6 , 5 , 6 , 6 , 7 , 5 , 6 , 6 , 7 , 6 , 7 , 7 , 8 
+,  4 , 5 , 5 , 6 , 5 , 6 , 6 , 7 , 5 , 6 , 6 , 7 , 6 , 7 , 7 , 8
  };
 
 /*
@@ -35,7 +35,7 @@ select_lookup_table[i][0] = 0,   the first bit set to one is at position 0
 select_lookup_table[i][1] = 2,   the second bit set to one is at position 2
 select_lookup_table[i][2] = 4,   the third bit set to one is at position 4
 select_lookup_table[i][3] = 6,   the fourth bit set to one is at position 6
-select_lookup_table[i][4] = 255, there is no more than 4 bits set to one in i, so we return escape value 255. 
+select_lookup_table[i][4] = 255, there is no more than 4 bits set to one in i, so we return escape value 255.
 */
 static cmph_uint8 select_lookup_table[256][8]={
 { 255 , 255 , 255 , 255 , 255 , 255 , 255 , 255 } , { 0 , 255 , 255 , 255 , 255 , 255 , 255 , 255 } ,

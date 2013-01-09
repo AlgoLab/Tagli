@@ -8,7 +8,7 @@ typedef struct __jenkins_state_t
 	CMPH_HASH hashfunc;
 	cmph_uint32 seed;
 } jenkins_state_t;
-	
+
 jenkins_state_t *jenkins_state_new(cmph_uint32 size); //size of hash table
 
 /** \fn cmph_uint32 jenkins_hash(jenkins_state_t *state, const char *k, cmph_uint32 keylen);
@@ -35,14 +35,14 @@ void jenkins_state_destroy(jenkins_state_t *state);
 /** \fn void jenkins_state_pack(jenkins_state_t *state, void *jenkins_packed);
  *  \brief Support the ability to pack a jenkins function into a preallocated contiguous memory space pointed by jenkins_packed.
  *  \param state points to the jenkins function
- *  \param jenkins_packed pointer to the contiguous memory area used to store the jenkins function. The size of jenkins_packed must be at least jenkins_state_packed_size() 
+ *  \param jenkins_packed pointer to the contiguous memory area used to store the jenkins function. The size of jenkins_packed must be at least jenkins_state_packed_size()
  */
 void jenkins_state_pack(jenkins_state_t *state, void *jenkins_packed);
 
 /** \fn cmph_uint32 jenkins_state_packed_size();
  *  \brief Return the amount of space needed to pack a jenkins function.
  *  \return the size of the packed function or zero for failures
- */ 
+ */
 cmph_uint32 jenkins_state_packed_size(void);
 
 

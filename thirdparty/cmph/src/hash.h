@@ -35,7 +35,7 @@ void hash_state_destroy(hash_state_t *state);
  *  \brief Support the ability to pack a hash function into a preallocated contiguous memory space pointed by hash_packed.
  *  \param state points to the hash function
  *  \param hash_packed pointer to the contiguous memory area used to store the hash function. The size of hash_packed must be at least hash_state_packed_size()
- *  
+ *
  * Support the ability to pack a hash function into a preallocated contiguous memory space pointed by hash_packed.
  * However, the hash function type must be packed outside.
  */
@@ -54,7 +54,7 @@ cmph_uint32 hash_packed(void *hash_packed, CMPH_HASH hashfunc, const char *k, cm
  *  \brief Return the amount of space needed to pack a hash function.
  *  \param hashfunc function type
  *  \return the size of the packed function or zero for failures
- */ 
+ */
 cmph_uint32 hash_state_packed_size(CMPH_HASH hashfunc);
 
 

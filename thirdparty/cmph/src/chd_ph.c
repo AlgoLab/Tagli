@@ -433,7 +433,7 @@ static inline cmph_uint8 place_bucket_probe(chd_ph_config_data_t *chd_ph, chd_ph
 			};
 		};
 		return 0;
-	} 
+	}
 	return 1;
 };
 
@@ -696,7 +696,7 @@ cmph_t *chd_ph_new(cmph_config_t *mph, double c)
 		chd_ph->occup_table = (cmph_uint8 *) calloc(chd_ph->n, sizeof(cmph_uint8));
 
 	disp_table = (cmph_uint32 *) calloc(chd_ph->nbuckets, sizeof(cmph_uint32));
-// 
+//
 // 	init_genrand(time(0));
 
 	while(1)

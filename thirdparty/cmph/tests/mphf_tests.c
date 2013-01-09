@@ -21,12 +21,12 @@
 
 void usage(const char *prg)
 {
-	fprintf(stderr, "usage: %s [-v] [-h] [-V] [-k nkeys] [-m file.mph]  keysfile\n", prg);   
+	fprintf(stderr, "usage: %s [-v] [-h] [-V] [-k nkeys] [-m file.mph]  keysfile\n", prg);
 }
 void usage_long(const char *prg)
 {
-	fprintf(stderr, "usage: %s [-v] [-h] [-V] [-k nkeys] [-m file.mph] keysfile\n", prg);   
-	fprintf(stderr, "Packed MPHFs testing tool\n\n"); 
+	fprintf(stderr, "usage: %s [-v] [-h] [-V] [-k nkeys] [-m file.mph] keysfile\n", prg);
+	fprintf(stderr, "Packed MPHFs testing tool\n\n");
 	fprintf(stderr, "  -h\t print this help message\n");
 	fprintf(stderr, "  -V\t print version number and exit\n");
 	fprintf(stderr, "  -v\t increase verbosity (may be used multiple times)\n");
@@ -86,14 +86,14 @@ int main(int argc, char **argv)
 		return 1;
 	}
 	keys_file = argv[optind];
-  
+
 	int ret = 0;
 	if (mphf_file == NULL)
 	{
 		mphf_file = (char *)malloc(strlen(keys_file) + 5);
 		memcpy(mphf_file, keys_file, strlen(keys_file));
 		memcpy(mphf_file + strlen(keys_file), ".mph\0", (size_t)5);
-	}	
+	}
 
 	keys_fd = fopen(keys_file, "r");
 
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 		}
 		source->dispose(source->data, buf, buflen);
 	}
-		
+
 	cmph_destroy(mphf);
 	free(hashtable);
 
@@ -157,5 +157,5 @@ int main(int argc, char **argv)
 	free(mphf_file);
     cmph_io_nlfile_adapter_destroy(source);
 	return ret;
-  
+
 }

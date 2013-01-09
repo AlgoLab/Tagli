@@ -301,7 +301,7 @@
 
 2005-01-24 17:20  fc_botelho
 
-	* README.t2t: the memory consumption to create a mphf using bmz 
+	* README.t2t: the memory consumption to create a mphf using bmz
 	with a heuristic was fixed.
 
 2005-01-24 17:11  fc_botelho

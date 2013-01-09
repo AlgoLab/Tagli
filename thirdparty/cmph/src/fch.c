@@ -264,7 +264,7 @@ cmph_t *fch_new(cmph_config_t *mph, double c)
 	fch->h2 = NULL;
 	fch->g = NULL;
 	do
-	{	
+	{
 		if (mph->verbosity)
 		{
 			fprintf(stderr, "Entering mapping step for mph creation of %u keys\n", fch->m);
