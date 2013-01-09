@@ -27,6 +27,14 @@ thirdparty/cmph/ltmain.sh
 thirdparty/cmph/man/Makefile.in
 thirdparty/cmph/src/Makefile.in
 thirdparty/cmph/tests/Makefile.in
+thirdparty/cmph/INSTALL
+thirdparty/cmph/config.guess
+thirdparty/cmph/config.h.in
+thirdparty/cmph/config.sub
+thirdparty/cmph/depcomp
+thirdparty/cmph/install-sh
+thirdparty/cmph/missing
+
 
 # Svn/Git file in 3rd party libs
 thirdparty/MurmurHash/.svn/
