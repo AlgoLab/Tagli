@@ -99,8 +99,8 @@ void MurmurHash3_x86_32 ( const void * key, int len,
 
   uint32_t h1 = seed;
 
-  const uint32_t c1 = 0xcc9e2d51;
-  const uint32_t c2 = 0x1b873593;
+  uint32_t c1 = 0xcc9e2d51;
+  uint32_t c2 = 0x1b873593;
 
   //----------
   // body
@@ -114,6 +114,7 @@ void MurmurHash3_x86_32 ( const void * key, int len,
     k1 *= c1;
     k1 = ROTL32(k1,15);
     k1 *= c2;
+
     h1 ^= k1;
     h1 = ROTL32(h1,13);
     h1 = h1*5+0xe6546b64;
@@ -157,10 +158,10 @@ void MurmurHash3_x86_128 ( const void * key, const int len,
   uint32_t h3 = seed;
   uint32_t h4 = seed;
 
-  const uint32_t c1 = 0x239b961b;
-  const uint32_t c2 = 0xab0e9789;
-  const uint32_t c3 = 0x38b34ae5;
-  const uint32_t c4 = 0xa1e38b93;
+  uint32_t c1 = 0x239b961b;
+  uint32_t c2 = 0xab0e9789;
+  uint32_t c3 = 0x38b34ae5;
+  uint32_t c4 = 0xa1e38b93;
 
   //----------
   // body
@@ -260,8 +261,8 @@ void MurmurHash3_x64_128 ( const void * key, const int len,
   uint64_t h1 = seed;
   uint64_t h2 = seed;
 
-  const uint64_t c1 = BIG_CONSTANT(0x87c37b91114253d5);
-  const uint64_t c2 = BIG_CONSTANT(0x4cf5ad432745937f);
+  uint64_t c1 = BIG_CONSTANT(0x87c37b91114253d5);
+  uint64_t c2 = BIG_CONSTANT(0x4cf5ad432745937f);
 
   //----------
   // body
