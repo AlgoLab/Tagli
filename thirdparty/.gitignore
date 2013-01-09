@@ -19,3 +19,13 @@ cmph/src/Makefile
 cmph/stamp-h1
 cmph/tests/.deps/
 cmph/tests/Makefile
+cmph/Makefile.in
+cmph/aclocal.m4
+cmph/config.h.in~
+cmph/configure
+cmph/cxxmph/Makefile.in
+cmph/examples/Makefile.in
+cmph/ltmain.sh
+cmph/man/Makefile.in
+cmph/src/Makefile.in
+cmph/tests/Makefile.in

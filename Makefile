@@ -356,7 +356,7 @@ endif
 
 ## Uncomment the following line to enable compiler optimizations
 CXXFLAGS+=-O2 -march=native
-CXXFLAGS_EXTRA= -Wall -Wextra -pedantic -Weffc++
+CXXFLAGS_EXTRA= -Wall -Wextra -pedantic #-Weffc++
 
 ## Uncomment the following line to disable assertions
 #CXXFLAGS+=-DNDEBUG
@@ -372,8 +372,7 @@ $(THIRDPARTY_DEPS)/lib/libcxxmph.a:
 	@echo "Building and installing CMPH..." ; \
 	mkdir -pv ${THIRDPARTY_DEPS}/ && \
 	pushd ${THIRDPARTY_DIR}/cmph && \
-	libtoolize && \
-	automake && \
+	autoreconf --force && \
 	./configure --enable-cxxmph --disable-shared --prefix=${THIRDPARTY_DEPS_FULL} && \
 	make clean && \
 	pushd cxxmph && \
