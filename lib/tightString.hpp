@@ -59,7 +59,7 @@ static const Fingerprint _highest_2_bits_bitmask_ = ~(~ (Fingerprint)0 >> 2);
 Nucleotide decodeNucleotide(const NucleotideBits);
 NucleotideBits encodeNucleotide(const Nucleotide);
 Fingerprint encode(const std::string& k, const size_t start=0, const size_t len=std::string::npos);
-std::string decode(const Fingerprint, const unsigned short int);
+std::string decode(const Fingerprint f, const unsigned short int length = KMER_LENGTH);
 Fingerprint reverse_complement(const Fingerprint f);
 //std::string reverse_complement(const std::string& s);
 std::string reverse_complement(const std::string& seq);

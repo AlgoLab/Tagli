@@ -175,7 +175,7 @@ int main(void)
                 Fingerprint f = seeds[2*i+j];
                 if (good_fingerprints.count(f) > 0) {
                     // We map the fingerprint to a putative junction
-                    ROOT_DEBUG(f << ":" << j);
+                    ROOT_DEBUG(f << ":" << decode(f) << ":" << j);
                     uint64_t index = junction_index.index(f);
                     ROOT_DEBUG("Index = " << index << ", Strand:" << j << ", Junction: " << junctions[index].dump());
                     ROOT_TRACE("Read 0");
