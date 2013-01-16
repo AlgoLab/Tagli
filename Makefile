@@ -161,21 +161,12 @@ PERS_DEFINE=NONE
 endif
 
 #####################
-# Simboli del preprocessore
-#
-# NDEBUG Disabilita vari controlli
-# LOG_MSG Abilita il log dei messaggi
-# LOG_THRESHOLD Livello di visualizzazione dei messaggi di log.
-# Puo' assumere il valore LOG_LEVEL_XXX con XXX uguale a
-# FATAL, ERROR, WARN, INFO, DEBUG, TRACE
-# Assume il valore di LOG_LEVEL_INFO se non definito.
-#
-DFLAGS=$(DCHECK) -D_GNU_SOURCE -DLOG_MSG -DLOG_THRESHOLD=LOG_LEVEL_$(LOG_LEVEL) $(ADD_DFLAGS)
+DFLAGS=$(DCHECK) -D_GNU_SOURCE $(ADD_DFLAGS)
 #####################
 
 ADD_CFLAGS= $(COMPFLAGS) $(DFLAGS) $(INCLUDE) $(CFLAGS)
 
-COMPILING_DESC=$(CXX)-$(current_sys)-$(compbit)bit-status_$(STATUS)-prof_$(PROF)-log_$(LOG_LEVEL)-checks_$(CHECKS)-persdefine_$(subst :,_next_,$(PERS_DEFINE))
+COMPILING_DESC=$(CXX)-$(current_sys)-$(compbit)bit-status_$(STATUS)-prof_$(PROF)-checks_$(CHECKS)-persdefine_$(subst :,_next_,$(PERS_DEFINE))
 
 BIN_DIR= bin
 
@@ -356,8 +347,7 @@ endif
 
 ## Uncomment the following line to enable compiler optimizations
 CXXFLAGS+=-O2 -march=native
-CXXFLAGS_EXTRA= -Wall -Wextra -pedantic #-Weffc++
-
+CXXFLAGS_EXTRA= -Wall -Wextra -pedantic $(ADD_CFLAGS) #-Weffc++
 ## Uncomment the following line to disable assertions
 #CXXFLAGS+=-DNDEBUG
 
@@ -395,7 +385,7 @@ $(THIRDPARTY_DEPS)/include/prettyprint.hpp: ${THIRDPARTY_DIR}/cxx-prettyprint/pr
 	cp $< $@
 
 $(BIN_DIR)/test: $(TEST_DIR)/test.cpp $(LIB_DIR)/tightString.o
-	$(CXX) $(CXXFLAGS) -o $@  $^ $(INCLUDE)
+	$(CXX) $(CXXFLAGS) $(CXXFLAGS_EXTRA) -o $@  $^ $(INCLUDE)
 
 
 $(BIN_DIR)/tagli1: $(SRC_DIR)/multiple_passes.cpp $(LIB_DIR)/log.cpp $(LIB_DIR)/junctions.o $(LIB_DIR)/tightString.o $(THIRDPARTY_DEPS)/lib/libcxxmph.a
@@ -459,4 +449,4 @@ $(LIB_DIR)/tightString-test.o : $(TEST_DIR)/tightString-test.cpp $(LIB_DIR)/tigh
 	$(CXX) $(GTEST_CXXFLAGS) -c $(TEST_DIR)/tightString-test.cpp -o $@
 
 $(BIN_DIR)/tightString-test : $(LIB_DIR)/tightString.o $(LIB_DIR)/tightString-test.o $(LIB_DIR)/gtest_main.a
-	$(CXX) $(GTEST_CXXFLAGS) $^ -o $@
+	$(CXX) $(GTEST_CXXFLAGS)  $(CXXFLAGS_EXTRA) $^ -o $@
