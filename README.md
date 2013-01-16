@@ -1,6 +1,6 @@
-Tagli
+=== Tagli ===
 
-A program to determine splice junctions fron NGS data
+A program to determine splice junctions from NGS data.
 
-Released under GPLv2 or later
+Released under GPLv2 or later.
 
