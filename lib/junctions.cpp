@@ -118,7 +118,7 @@ void Junction::add_read(LongTightString read) {
                 if(longest_right_overlap(read, multiple_side) < read.length() - read_left) {
                     // the read is not absorbed into any multiple side component, we must
                     // sprout a new component
-                    LongTightString new_multiple = read.prefix(read.length()-read_left);
+						LongTightString new_multiple(read.prefix(read.length()-read_left));
                     add_multiple(new_multiple);
                     // remove all components that are contained in the one that we have just added
                     clean_multiple(new_multiple);
