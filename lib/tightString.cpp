@@ -289,16 +289,20 @@ Match find_longest_prefix_substring(const LongTightString & s1, const LongTightS
 }
 
 Match find_largest_common_substring(const LongTightString & s1, const LongTightString & s2) {
-  const std::string ss1(s1.unimport());
-  const std::string ss2(s2.unimport());
-  const len_t ls1= ss1.length();
-  const len_t ls2= ss2.length();
-  const len_t max_len = min(ls1, ls2);
-  for (len_t len= max_len; len>0; --len) {
-	 for (len_t i1= 0; i1<=ls1-len; ++i1) {
-		for (len_t i2= 0; i2<=ls2-len; ++i2) {
-		  if (ss1.compare(i1, len, ss2, i2, len)==0) {
-			 return Match(i1, i2, len);
+  const LongTightStringSequence& ss1(s1.sequence());
+  const LongTightStringSequence& ss2(s2.sequence());
+  const len_t ls1= 2*s1.length();
+  const len_t ls2= 2*s2.length();
+  const len_t max_len= min(ls1, ls2);
+  for (len_t len= max_len; len>0; len-= 2) {
+	 for (len_t i1= 0; i1<=ls1-len; i1+= 2) {
+		for (len_t i2= 0; i2<=ls2-len; i2+= 2) {
+		  bool different= false;
+		  for (len_t j1= i1, j2= i2; !(different) && (j1<i1+len); ++j1, ++j2) {
+			 different |= (ss1[j1] != ss2[j2]);
+		  }
+		  if (!different) {
+			 return Match((ls1-i1-len)/2, (ls2-i2-len)/2, len/2);
 		  }
 		}
 	 }
