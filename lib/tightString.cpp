@@ -276,7 +276,7 @@ Match find_longest_prefix_substring(const LongTightString & s1, const LongTightS
   const len_t max_len = min(ls1, ls2);
   for (len_t len= max_len; len>0; --len) {
 	 for (len_t i2= 0; i2<=ls2-len; ++i2) {
-		if (ss1.compare(0, len, ss2, i2, len)) {
+		if (ss1.compare(0, len, ss2, i2, len)==0) {
 		  return Match(0, i2, len);
 		}
 	 }
@@ -293,7 +293,7 @@ Match find_largest_common_substring(const LongTightString & s1, const LongTightS
   for (len_t len= max_len; len>0; --len) {
 	 for (len_t i1= 0; i1<=ls1-len; ++i1) {
 		for (len_t i2= 0; i2<=ls2-len; ++i2) {
-		  if (ss1.compare(i1, len, ss2, i2, len)) {
+		  if (ss1.compare(i1, len, ss2, i2, len)==0) {
 			 return Match(i1, i2, len);
 		  }
 		}
