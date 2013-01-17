@@ -156,13 +156,13 @@ public:
     }
 
 
-    bool compare(const LongTightString & s) {
+    bool compare(const LongTightString & s) const {
         return (_length == s.length() &&
                 _sequence == s.sequence());
     }
 
 
-    std::string unimport(void);
+    std::string unimport(void) const;
     void import(const std::string&);
     // single character version
     // all update the object
@@ -178,8 +178,8 @@ public:
     void unshift(const LongTightString &);
     LongTightString reverse_complement();
 
-    LongTightString prefix(const len_t length);
-    LongTightString suffix(const len_t length);
+    LongTightString prefix(const len_t length) const;
+    LongTightString suffix(const len_t length) const;
     bool is_prefix(const LongTightString & s);
     bool is_suffix(const LongTightString & s);
     LongTightString substring(const len_t begin, const len_t end) {return (this->prefix(end+1)).suffix(end-begin);};
@@ -199,7 +199,7 @@ public:
    the suffixes are ordered from shortest to longest,
    so that at position i we can find the i-long suffix
 */
-const std::vector<LongTightString> build_suffixes(LongTightString x);
+std::vector<LongTightString> build_suffixes(const LongTightString& s);
 const std::vector<LongTightString> build_prefixes(LongTightString x);
 
 /*

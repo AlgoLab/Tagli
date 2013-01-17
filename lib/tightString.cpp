@@ -77,7 +77,7 @@ Nucleotide decodeNucleotide(NucleotideBits nucleotide) {
 NucleotideBits encodeNucleotide(Nucleotide nucleotide) {
     const static char map[]={0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,3};
 #ifndef NDEBUG
-//#warning "The following assertion is quite slow: consider to disable assertions (flag -DNDEBUG) or to comment out the code."
+#warning "The following assertion is quite slow: consider to disable assertions (flag -DNDEBUG) or to comment out the code."
     assert((nucleotide == 'A') || (nucleotide == 'a') ||
            (nucleotide == 'C') || (nucleotide == 'c') ||
            (nucleotide == 'G') || (nucleotide == 'g') ||
@@ -125,7 +125,7 @@ void LongTightString::import(const std::string& s) {
     }
 }
 
-std::string LongTightString::unimport(void) {
+std::string LongTightString::unimport(void) const {
     std::string s(_length, ' ');
     NucleotideBits t;
     for (uint32_t i=0; i < _length; ++i) {
@@ -254,48 +254,59 @@ LongTightStringSequence merge(const LongTightString & s1, const LongTightString 
   Find the longest suffix of s1 that is a substring of s2
 */
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2) {
-    vector<LongTightString> s1_suffix = build_suffixes(s1);
-    vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t s2_len = s2.length();
-    len_t max_len = min(s1.length(), s2_len);
-    for(len_t len = max_len; len > 0; len--)
-        for(len_t pos = len; pos <= s2_len; pos++)
-            if (s1_suffix[len].compare(s2_suffix[pos].prefix(len)))
-                return Match(s1.length()-len, s2_len-pos, len);
-    return Match(0, 0, 0);
+  vector<LongTightString> s1_suffix = build_suffixes(s1);
+  vector<LongTightString> s2_suffix = build_suffixes(s2);
+  len_t s2_len = s2.length();
+  len_t max_len = min(s1.length(), s2_len);
+  for(len_t len = max_len; len > 0; len--)
+	 for(len_t pos = len; pos <= s2_len; pos++)
+		if (s1_suffix[len].compare(s2_suffix[pos].prefix(len)))
+		  return Match(s1.length()-len, s2_len-pos, len);
+  return Match(0, 0, 0);
 }
 
 /*
   Find the longest prefix of s1 that is a substring of s2
 */
 Match find_longest_prefix_substring(const LongTightString & s1, const LongTightString & s2) {
-    vector<LongTightString> s1_prefix = build_prefixes(s1);
-    vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t s2_len = s2.length();
-    len_t max_len = min(s1.length(), s2_len);
-    for(len_t len = max_len; len > 0; len--)
-        for(len_t pos = len; pos <= s2_len; pos++)
-            if (s1_prefix[len].compare(s2_suffix[pos].prefix(len)))
-                return Match(0, s2_len-pos, len);
-    return Match(0, 0, 0);
+  const std::string ss1(s1.unimport());
+  const std::string ss2(s2.unimport());
+  const len_t ls1= ss1.length();
+  const len_t ls2= ss2.length();
+  const len_t max_len = min(ls1, ls2);
+  for (len_t len= max_len; len>0; --len) {
+	 for (len_t i2= 0; i2<=ls2-len; ++i2) {
+		if (ss1.compare(0, len, ss2, i2, len)) {
+		  return Match(0, i2, len);
+		}
+	 }
+  }
+  return Match(0, 0, 0);
 }
 
 Match find_largest_common_substring(const LongTightString & s1, const LongTightString & s2) {
-    vector<LongTightString> s1_suffix = build_suffixes(s1);
-    vector<LongTightString> s2_suffix = build_suffixes(s2);
-    len_t max_len=min(s1.length(), s2.length());
-    for(len_t len=max_len; len>0; len--)
-        for(len_t l1=len; l1<=s1.length(); l1++)
-            for(len_t l2=len; l2<=s2.length(); l2++)
-                if ((s1_suffix[l1].prefix(len)).compare(s2_suffix[l2].prefix(len)))
-                    return Match(s1.length()-l1, s2.length()-l2, len);
-    return Match(0, 0, 0);
+  const std::string ss1(s1.unimport());
+  const std::string ss2(s2.unimport());
+  const len_t ls1= ss1.length();
+  const len_t ls2= ss2.length();
+  const len_t max_len = min(ls1, ls2);
+  for (len_t len= max_len; len>0; --len) {
+	 for (len_t i1= 0; i1<=ls1-len; ++i1) {
+		for (len_t i2= 0; i2<=ls2-len; ++i2) {
+		  if (ss1.compare(i1, len, ss2, i2, len)) {
+			 return Match(i1, i2, len);
+		  }
+		}
+	 }
+  }
+  return Match(0, 0, 0);
 }
 
-const std::vector<LongTightString> build_suffixes(LongTightString x) {
+std::vector<LongTightString> build_suffixes(const LongTightString& s) {
+  LongTightString x(s);
     std::vector<LongTightString> sa;
     sa.reserve(x.length()+1);
-    len_t max = x.length();
+    const len_t max = x.length();
     for(len_t len = 0; len < max; len++) {
         sa.push_back(x);
         x.shift();
@@ -316,13 +327,13 @@ const std::vector<LongTightString> build_prefixes(LongTightString x) {
     return sa;
 }
 
-LongTightString LongTightString::prefix(const len_t length) {
+LongTightString LongTightString::prefix(const len_t length) const {
     len_t actual_len = std::min(length, _length);
     len_t movement = _length-actual_len;
     LongTightString result(_sequence>>(2*movement), actual_len);
     return result;
 }
-LongTightString LongTightString::suffix(const len_t length) {
+LongTightString LongTightString::suffix(const len_t length) const {
     len_t actual_len = std::min(length, _length);
     LongTightString result((_sequence<<(LONGTIGHTSTRING_BITSET_LEN-2*actual_len))>>(LONGTIGHTSTRING_BITSET_LEN-2*actual_len), actual_len);
     return result;
