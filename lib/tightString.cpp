@@ -254,14 +254,18 @@ LongTightStringSequence merge(const LongTightString & s1, const LongTightString 
   Find the longest suffix of s1 that is a substring of s2
 */
 Match find_longest_suffix_substring(const LongTightString & s1, const LongTightString & s2) {
-  vector<LongTightString> s1_suffix = build_suffixes(s1);
-  vector<LongTightString> s2_suffix = build_suffixes(s2);
-  len_t s2_len = s2.length();
-  len_t max_len = min(s1.length(), s2_len);
-  for(len_t len = max_len; len > 0; len--)
-	 for(len_t pos = len; pos <= s2_len; pos++)
-		if (s1_suffix[len].compare(s2_suffix[pos].prefix(len)))
-		  return Match(s1.length()-len, s2_len-pos, len);
+  const std::string ss1(s1.unimport());
+  const std::string ss2(s2.unimport());
+  const len_t ls1= ss1.length();
+  const len_t ls2= ss2.length();
+  const len_t max_len = min(ls1, ls2);
+  for (len_t len= max_len; len>0; --len) {
+	 for (len_t i2= 0; i2<=ls2-len; ++i2) {
+		if (ss1.compare(ls1-len, len, ss2, i2, len)==0) {
+		  return Match(ls1-len, i2, len);
+		}
+	 }
+  }
   return Match(0, 0, 0);
 }
 
