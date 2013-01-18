@@ -36,13 +36,14 @@ LIB_DIR= lib
 TEST_DIR= t
 BIN_DIR= bin
 OBJ_DIR= obj
+DEP_DIR= deps
 
 THIRDPARTY_DIR := thirdparty
 THIRDPARTY_DIR_FULL := $(PWD)/thirdparty
 THIRDPARTY_LOCAL := $(THIRDPARTY_DIR)/local-deps
 THIRDPARTY_LOCAL_FULL := $(PWD)/$(THIRDPARTY_LOCAL)
 
-BASE_CXXFLAGS=-g -fPIC --std=c++11
+BASE_CXXFLAGS=-g -fPIC -Wall --std=c++11
 
 
 ifneq ($(STATUS), debug)
@@ -141,6 +142,7 @@ COMPILING_DESC=$(CXX)-status_$(STATUS)-prof_$(PROF)-checks_$(CHECKS)-persdefine_
 
 override BIN_DIR_FULL:=$(PWD)/$(BIN_DIR)/$(COMPILING_DESC)
 override OBJ_DIR_FULL:=$(PWD)/$(OBJ_DIR)/$(COMPILING_DESC)
+override DEP_DIR_FULL:=$(PWD)/$(DEP_DIR)/$(COMPILING_DESC)
 
 base_SOURCE= \
 	$(SRC_DIR)/multiple_passes.cpp \
@@ -156,16 +158,16 @@ all: .make thirdparty $(BIN_DIR)/tagli1
 
 .PHONY:	clean
 clean:
-	@echo "Cleaning objects and programs..."
-	@rm -rf $(OBJ_DIR_FULL) $(BIN_DIR_FULL)
+	@echo " **  Cleaning objects and programs..."
+	@rm -rf $(OBJ_DIR_FULL) $(BIN_DIR_FULL) $(DEP_DIR_FULL)
 
 .PHONY:	depclean
 depclean: clean
-	@echo "Cleaning thirdparty libraries..."
+	@echo " **  Cleaning thirdparty libraries..."
 	@rm -rf $(THIRDPARTY_LOCAL_FULL)
 
 .make: Makefile
-	@echo "Makefile modified! Cleaning enforced."
+	@echo " *** Makefile modified! Cleaning enforced."
 	@$(MAKE) clean
 	@touch .make
 
@@ -181,8 +183,8 @@ thirdparty: cmph kseq cxx-prettyprint
 cmph: $(THIRDPARTY_LOCAL_FULL)/lib/libcxxmph.a
 
 $(THIRDPARTY_LOCAL_FULL)/lib/libcxxmph.a:
-	@echo "Building and installing CMPH..."
-	@mkdir -pv $(THIRDPARTY_LOCAL_FULL)
+	@echo " *** Building and installing CMPH..."
+	@mkdir -p $(THIRDPARTY_LOCAL_FULL)
 	@cd $(THIRDPARTY_DIR_FULL)/cmph && \
 	autoreconf --force -i && \
 	./configure --enable-cxxmph --disable-shared --prefix=$(THIRDPARTY_LOCAL_FULL) && \
@@ -197,7 +199,7 @@ $(THIRDPARTY_LOCAL_FULL)/lib/libcxxmph.a:
 kseq: $(THIRDPARTY_LOCAL_FULL)/include/kseq.h
 
 $(THIRDPARTY_LOCAL_FULL)/include/kseq.h: $(THIRDPARTY_DIR_FULL)/kseq/kseq.h
-	mkdir -pv $(THIRDPARTY_LOCAL_FULL)/include
+	mkdir -p $(THIRDPARTY_LOCAL_FULL)/include
 	cp $< $@
 
 
@@ -205,7 +207,7 @@ $(THIRDPARTY_LOCAL_FULL)/include/kseq.h: $(THIRDPARTY_DIR_FULL)/kseq/kseq.h
 cxx-prettyprint: $(THIRDPARTY_LOCAL_FULL)/include/prettyprint.hpp
 
 $(THIRDPARTY_LOCAL_FULL)/include/prettyprint.hpp: $(THIRDPARTY_DIR_FULL)/cxx-prettyprint/prettyprint.hpp
-	mkdir -pv $(THIRDPARTY_LOCAL_FULL)/include
+	mkdir -p $(THIRDPARTY_LOCAL_FULL)/include
 	cp $< $@
 
 # Google Testing Framework. Actual test specifications are in the bottom
@@ -245,29 +247,40 @@ CXXFLAGS += $(BASE_CXXFLAGS) $(ADD_CXXFLAGS)
 
 
 .PHONY: tagli1
+
 tagli1: .make $(BIN_DIR)/tagli1
 
-$(BIN_DIR_FULL)/tagli1: | thirdparty .make
+$(BIN_DIR_FULL)_tagli1_OBJS := \
+	$(addprefix $(OBJ_DIR_FULL)/,  multiple_passes.o log.o junctions.o tightString.o ) \
+	$(addprefix $(THIRDPARTY_LOCAL_FULL)/, lib/libcxxmph.a )
 
-$(BIN_DIR_FULL)/tagli1: $(OBJ_DIR_FULL)/multiple_passes.o $(OBJ_DIR_FULL)/log.o $(OBJ_DIR_FULL)/junctions.o $(OBJ_DIR_FULL)/tightString.o $(THIRDPARTY_LOCAL_FULL)/lib/libcxxmph.a
-	@echo ' * Linking $<'
-	@mkdir -pv $(dir $@)
-	@$(CXX) $(CXXFLAGS) -o $@  $^ $(LIBS)
+$(BIN_DIR_FULL)/tagli1: .make cmph kseq cxx-prettyprint $($(BIN_DIR_FULL)_tagli1_OBJS)
+	@echo ' *   Linking "$(notdir $@)"'
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CXXFLAGS) -o $@ $($(BIN_DIR_FULL)_tagli1_OBJS) $(LIBS)
 
-VPATH = $(LIB_DIR):$(SRC_DIR)
+VPATH = $(LIB_DIR):$(SRC_DIR) #:$(DEP_DIR)
 
 $(BIN_DIR)/%: $(BIN_DIR_FULL)/%
 	@cp $^ $@
 
-$(OBJ_DIR_FULL)/%.o: %.cpp
-	@echo ' * Compiling $<'
-	@mkdir -pv $(dir $@)
-	@$(CXX) $(CXXFLAGS) -o $@ -c $<
+$(OBJ_DIR_FULL)/%.o: %.cpp .make
+	@echo ' *   Compiling $<'
+	@mkdir -p $(dir $@)
+	@mkdir -p $(DEP_DIR_FULL)
+	@$(CXX) -MMD $(CXXFLAGS) -o $@ -c $<
+	@mv $(basename $@).d $(DEP_DIR_FULL)
+	@sed -i -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' $(DEP_DIR_FULL)/$(notdir $(basename $@)).d
 
-$(OBJ_DIR_FULL)/%.o: $(TEST_DIR)/%.cpp
-	@echo ' * Compiling $<'
-	@mkdir -pv $(dir $@)
-	@$(CXX) $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -o $@ -c $<
+$(OBJ_DIR_FULL)/%.o: $(TEST_DIR)/%.cpp .make
+	@echo ' *   Compiling $<'
+	@mkdir -p $(dir $@)
+	@$(CXX) -MMD $(GTEST_CPPFLAGS) $(GTEST_CXXFLAGS) -o $@ -c $<
+	@mv $(basename $@).d $(DEP_DIR_FULL)
+	@sed -i -e 's/#.*//' -e 's/^[^:]*: *//' -e 's/ *\\$$//' -e '/^$$/ d' -e 's/$$/ :/' $(DEP_DIR_FULL)/$(notdir $(basename $@)).d
+
+-include $(DEP_DIR)/*.d
+
 
 ################################
 # Tests
@@ -281,12 +294,16 @@ test: gtest $(TESTS)
 		time $$bintest ; \
 	done
 
-$(BIN_DIR_FULL)/test: $(OBJ_DIR_FULL)/test.o $(OBJ_DIR_FULL)/tightString.o
-	@echo ' * Linking $<'
-	@mkdir -pv $(dir $@)
-	@$(CXX) $(CXXFLAGS) -o $@  $^ $(LIBS)
+#$(BIN_DIR_FULL)/test: $(OBJ_DIR_FULL)/test.o $(OBJ_DIR_FULL)/tightString.o
+#	@echo ' *   Linking "$(notdir $@)"'
+#	@mkdir -p $(dir $@)
+#	@$(CXX) $(CXXFLAGS) -o $@  $^ $(LIBS)
 
-$(BIN_DIR_FULL)/tightString-test : $(OBJ_DIR_FULL)/tightString.o $(OBJ_DIR_FULL)/tightString-test.o $(THIRDPARTY_LOCAL_FULL)/lib/gtest_main.a
-	@echo ' * Linking $<'
-	@mkdir -pv $(dir $@)
-	@$(CXX) $(CXXFLAGS) -o $@  $^ $(LIBS)
+$(BIN_DIR_FULL)_tightString_test_OBJS := \
+	$(addprefix $(OBJ_DIR_FULL)/,  tightString.o tightString-test.o ) \
+	$(addprefix $(THIRDPARTY_LOCAL_FULL)/, lib/gtest_main.a )
+
+$(BIN_DIR_FULL)/tightString-test : gtest $($(BIN_DIR_FULL)_tightString_test_OBJS)
+	@echo ' *   Linking "$(notdir $@)"'
+	@mkdir -p $(dir $@)
+	@$(CXX) $(CXXFLAGS) -o $@ $($(BIN_DIR_FULL)_tightString_test_OBJS) $(LIBS)
